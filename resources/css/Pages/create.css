@@ -1,0 +1,30 @@
+body {
+    background-color: #f7f9fc;
+    font-family: 'Roboto', sans-serif;
+}
+
+.card {
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0;
+}
+
+.form-select, .form-control {
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    border-radius: 25px;
+}
+
+.alert {
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+}
+
+textarea.form-control {
+    resize: none;
+}

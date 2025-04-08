@@ -1,0 +1,91 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.container {
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin: 20px 0;
+}
+
+p {
+    margin: 10px 0;
+    color: #555;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.card .icon {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 15px;
+    background-size: cover;
+    background-position: center;
+}
+
+.card p {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Icons */
+.defect {
+    background-color: #ff4d4d;
+    border-radius: 50%;
+}
+
+.waiting-time {
+    background-color: #00cccc;
+    border-radius: 50%;
+}
+
+.extra-motion {
+    background-color: #3399ff;
+    border-radius: 50%;
+}
+
+.excess-inventory {
+    background-color: #ff9933;
+    border-radius: 50%;
+}
+
+.over-production {
+    background-color: #996633;
+    border-radius: 50%;
+}
+
+.extra-processing {
+    background-color: #99cc00;
+    border-radius: 50%;
+}
+
+.unnecessary-transportation {
+    background-color: #3366ff;
+    border-radius: 50%;
+}
+
+.unutilized-talents {
+    background-color: #33cc33;
+    border-radius: 50%;
+}
