@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mesin;
+use App\Models\Downtime;
+use App\Models\Setup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class MesinController extends Controller
@@ -56,11 +58,34 @@ class MesinController extends Controller
         return redirect()->route('mesin.index')
             ->with('success', 'Mesin berhasil diupdate');
     }
-
     public function destroy(Mesin $mesin)
     {
-        $mesin->delete();
+        // Periksa status di model Downtime
+        $pendingDowntime = Downtime::where('molding_machine', $mesin->id)
+            ->whereIn('status', ['Waiting', '
+In Progress', 'Waiting QC Approve'])
+            ->first();
 
+        // Periksa status di model Setup
+        $pendingSetup = Setup::where('molding_machine', $mesin->id)
+            ->whereIn('status', ['Waiting', '
+In Progress', 'Waiting QC Approve'])
+            ->first();
+
+        // Jika ada downtime yang masih aktif
+        if ($pendingDowntime) {
+            return redirect()->route('mesin.index')
+                ->with('error', 'Mesin masih dalam downtime aktif dengan status ' . $pendingDowntime->status);
+        }
+
+        // Jika ada setup yang masih aktif
+        if ($pendingSetup) {
+            return redirect()->route('mesin.index')
+                ->with('error', 'Mesin masih dalam setup aktif dengan status ' . $pendingSetup->status);
+        }
+
+        // Jika semua pengecekan berhasil, lanjutkan dengan penghapusan
+        $mesin->delete();
         return redirect()->route('mesin.index')
             ->with('success', 'Mesin berhasil dihapus');
     }

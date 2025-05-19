@@ -360,8 +360,7 @@
                                                 {{ request('filter_type') === 'mould_category' ? 'selected' : '' }}>Mould
                                                 Category</option>
                                             <option value="molding_mc"
-                                                {{ request('filter_type') === 'molding_mc' ? 'selected' : '' }}>Molding
-                                                Machine</option>
+                                                {{ request('filter_type') === 'molding_mc' ? 'selected' : '' }}>Nomor Mesin</option>
                                         </select>
                                     </div>
                                 </div>
@@ -372,12 +371,11 @@
                                         <label class="form-label text-muted small fw-medium mb-2">
                                             Search
                                         </label>
+                                        <div class="d-flex align-items-center">
                                         <div class="input-group input-group-sm shadow-sm">
                                             <input type="text" name="search" class="form-control"
                                                 placeholder="Cari data..." value="{{ request('search') }}">
-                                            <button type="submit" class="btn btn-primary px-3">
-                                                <i class="fas fa-search me-1"></i>
-                                            </button>
+                                            
                                             @if (request('search'))
                                                 <a href="{{ route('rekapsetup.search', ['show' => request('show')]) }}"
                                                     class="btn btn-outline-secondary">
@@ -385,6 +383,9 @@
                                                 </a>
                                             @endif
                                         </div>
+                                        <button type="submit" class="btn btn-info btn-sm text-white px-2 ms-2">
+                                            Filter
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -486,7 +487,7 @@
                                                             </button>
                                                         @endif
                                                         <!-- IPQC Approve button - only for IPQC role -->
-                                                        @if (auth()->user()->role === 'ipqc' && $setup->status === 'Menunggu QC Approve')
+                                                        @if (auth()->user()->role === 'ipqc' && $setup->status === 'Waiting QC Approve')
                                                             <button type="button" class="btn btn-sm btn-outline-primary"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#approvalModal{{ $setup->id }}">
@@ -624,7 +625,7 @@
                                                                             name="qc_approve" required
                                                                             placeholder="Contoh: tengku/1233">
                                                                         <small class="text-muted">Format:
-                                                                            nama/badge</small>
+                                                                            name/badge</small>
                                                                         @error('qc_approve')
                                                                             <div class="invalid-feedback">{{ $message }}
                                                                             </div>
@@ -635,8 +636,8 @@
 
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
-                                                                    data-bs-dismiss="modal">Batal</button>
-                                                                <button type="submit" class="btn btn-success">Simpan
+                                                                    data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-success">Save
                                                                 </button>
                                                             </div>
                                                         </form>

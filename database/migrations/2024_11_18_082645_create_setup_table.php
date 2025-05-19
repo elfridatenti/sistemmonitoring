@@ -27,7 +27,6 @@ return new class extends Migration
             $table->string('cable_grip_size')->nullable();
             $table->string('molding_machine')->nullable();
             $table->text('job_request')->nullable();
-            $table->date('issued_date')->nullable();
             $table->string('asset_no_bt')->nullable();
             $table->string('maintenance_name')->nullable();
             $table->text('setup_problem')->nullable();
@@ -35,6 +34,7 @@ return new class extends Migration
             $table->string('marking_type_mtc')->nullable();
             $table->string('cable_grip_size_mtc')->nullable();
             $table->string('ampere_rating')->nullable();
+            $table->string('dokumentasi')->nullable();
             $table->string('marking')->nullable();
             $table->string('relief')->nullable();
             $table->string('mismatch')->nullable();

@@ -11,7 +11,9 @@ class Notifikasi extends Model
     protected $fillable = [
         'user_id', 
         'title', 
-        'message', 
+        'message',
+        'related_id',
+        'related_type',
         'is_read',
         'data'
     ];

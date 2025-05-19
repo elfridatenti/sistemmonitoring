@@ -193,39 +193,62 @@
         /* Table and Column Styling Improvements */
         .table {
             width: 100%;
-            table-layout: fixed; /* Ensures consistent column widths */
+            table-layout: fixed;
+            /* Ensures consistent column widths */
         }
-    
-        .table th, .table td {
+
+        .table th,
+        .table td {
             padding: 10px 8px;
             vertical-align: middle;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-    
+
         /* Specific Column Width Adjustments */
-        .table th.no-column { width: 50px; }
-        .table th.badge-column { width: 80px; }
-        .table th.username-column { width: 100px; }
-        .table th.name-column { width: 120px; }
-        .table th.email-column { width: 150px; }
-        .table th.phone-column { width: 100px; }
-        .table th.role-column { width: 90px; }
-    
+        .table th.no-column {
+            width: 50px;
+        }
+
+        .table th.badge-column {
+            width: 80px;
+        }
+
+        .table th.username-column {
+            width: 100px;
+        }
+
+        .table th.name-column {
+            width: 120px;
+        }
+
+        .table th.email-column {
+            width: 150px;
+        }
+
+        .table th.phone-column {
+            width: 100px;
+        }
+
+        .table th.role-column {
+            width: 90px;
+        }
+
         /* Action Column Styling */
         .table th.actions-column {
-            width: 120px; /* Fixed width for action column */
+            width: 120px;
+            /* Fixed width for action column */
             text-align: center;
         }
-    
+
         .actions-cell {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 4px;
         }
-    
+
         .actions-cell .btn {
             display: flex;
             justify-content: center;
@@ -233,24 +256,24 @@
             padding: 0.25rem 0.5rem;
             margin: 0 2px;
         }
-    
+
         .actions-cell .btn i {
             font-size: 0.75rem;
         }
     </style>
-    
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
                 <div class="card form-card">
                     <div class="card-header bg-gradient-primary">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h4 class="mb-0 text-white">DATA USER</h4>
+                            <h4 class="mb-0 text-white">DATA USERS</h4>
                             <a href="{{ route('datauser.create') }}" class="btn btn-sm btn-outline-light">
-                                <i class="far fa-plus-square me-1"></i> Tambah
+                                <i class="far fa-plus-square me-1"></i> Add New User
                             </a>
                         </div>
-                        <p class="mb-0 text-white-50">Mengelola data pengguna dan hak akses</p>
+                        <p class="mb-0 text-white-50">"Active User in the Molding Information System"</p>
                     </div>
 
 
@@ -258,33 +281,36 @@
                     <div class="card-body">
                         <!-- Alert dengan animasi fade -->
                         @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-check-circle me-2"></i>
-                                <div>{{ session('success') }}</div>
+                            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <div>{{ session('success') }}</div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                             </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                <div>{{ session('error') }}</div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <div>{{ session('error') }}</div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                             </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-        
-                    @if (session('info'))
-                    <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <div>{{ session('info') }}</div>
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
+                        @endif
+
+                        @if (session('info'))
+                            <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <div>{{ session('info') }}</div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
 
                         <form action="{{ route('datauser.index') }}" method="GET">
                             <div class="row align-items-end">
@@ -317,13 +343,14 @@
                                         <select name="filter_type" class="form-select form-select-sm shadow-sm"
                                             style="cursor: pointer;">
                                             <option value="all" {{ request('filter_type') == 'all' ? 'selected' : '' }}>
-                                                Semua Data</option>
-                                            <option value="name" {{ request('filter_type') == 'name' ? 'selected' : '' }}>
-                                                Nama</option>
+                                                All</option>
+                                            <option value="name"
+                                                {{ request('filter_type') == 'name' ? 'selected' : '' }}>
+                                                Name</option>
                                             <option value="badge"
                                                 {{ request('filter_type') == 'badge' ? 'selected' : '' }}>Badge</option>
-                                            <option value="level_user"
-                                                {{ request('filter_type') == 'level_user' ? 'selected' : '' }}>Jabatan
+                                            <option value="Department"
+                                                {{ request('filter_type') == 'department' ? 'selected' : '' }}>Department
                                             </option>
                                             <option value="role"
                                                 {{ request('filter_type') == 'role' ? 'selected' : '' }}>Role</option>
@@ -337,22 +364,24 @@
                                         <label class="form-label text-muted small fw-medium mb-2">
                                             Search
                                         </label>
-                                        <div class="input-group input-group-sm shadow-sm">
-                                            <input type="text" name="search" class="form-control"
-                                                placeholder="Cari data..." value="{{ request('search') }}">
-                                            <button type="submit" class="btn btn-primary px-3">
-                                                <i class="fas fa-search me-1"></i>
+                                        <div class="d-flex align-items-center">
+                                            <div class="input-group input-group-sm shadow-sm">
+                                                <input type="text" name="search" class="form-control"
+                                                    placeholder="Search..." value="{{ request('search') }}">
+
+                                                @if (request('search'))
+                                                    <a href="{{ route('datauser.index', ['show' => request('show')]) }}"
+                                                        class="btn btn-outline-secondary">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                            <button type="submit" class="btn btn-info btn-sm text-white px-2 ms-2">
+                                                Filter
                                             </button>
-                                            @if (request('search'))
-                                                <a href="{{ route('datauser.index', ['show' => request('show')]) }}"
-                                                    class="btn btn-outline-secondary">
-                                                    <i class="fas fa-times"></i>
-                                                </a>
-                                            @endif
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </form>
                         <div class="mt-4">
                             <div class="table-responsive">
@@ -361,14 +390,14 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 50px">No</th>
-                                            <th>Nama</th>
+                                            <th>Name</th>
                                             <th>Badge</th>
                                             <th>Username</th>
                                             <th>Email</th>
                                             <th>Phone</th>
-                                            <th>Jabatan</th>
+                                            <th>Department</th>
                                             <th>Role</th>
-                                            <th>Aksi</th>
+                                            <th>actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -380,7 +409,7 @@
                                                 <td>{{ $user->username }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td class="text-center">{{ $user->no_tlpn }}</td>
-                                                <td>{{ $user->level_user }}</td>
+                                                <td>{{ $user->department }}</td>
                                                 <td class="text-center">
                                                     @switch($user->role)
                                                         @case('leader')
@@ -431,29 +460,33 @@
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header bg-danger text-white">
-                                                            <h5 class="modal-title" id="deleteModalLabel{{ $user->id }}">
-                                                                <i class="fas fa-exclamation-triangle me-2"></i>Konfirmasi Penghapusan
+                                                            <h5 class="modal-title"
+                                                                id="deleteModalLabel{{ $user->id }}">
+                                                                <i class="fas fa-exclamation-triangle me-2"></i>Delete
+                                                                Confirmation
                                                             </h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah yakin untuk menghapus user ini?</p>
+                                                            <p>Are you sure you want to delete this user?</p>
                                                             <p class="text-muted">
                                                                 Badge: {{ $user->badge }}<br>
-                                                                Nama: {{ $user->nama }}<br>
+                                                                Name: {{ $user->nama }}<br>
                                                                 Role: {{ $user->role }}
                                                             </p>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                                <i class="fas fa-times me-1"></i>Batal
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">
+                                                                <i class="fas fa-times me-1"></i>Cancel
                                                             </button>
-                                                            <form action="{{ route('datauser.destroy', $user) }}" method="POST">
+                                                            <form action="{{ route('datauser.destroy', $user) }}"
+                                                                method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">
-                                                                    <i class="fas fa-trash-alt me-1"></i>Hapus
+                                                                    <i class="fas fa-trash-alt me-1"></i>Delete
                                                                 </button>
                                                             </form>
                                                         </div>
@@ -476,9 +509,10 @@
 
                                                             <div class="modal-header bg-gradient-primary">
                                                                 <h5 class="modal-title text-light">
-                                                                    <i class="fas fa-user-edit me-2"></i>EDIT DATA USER
+                                                                    <i class="fas fa-user-edit me-2"></i>EDIT USER DATA
                                                                 </h5>
-                                                                <a href="{{ route('datauser.index') }}" class="btn btn-outline-light hover-scale">
+                                                                <a href="{{ route('datauser.index') }}"
+                                                                    class="btn btn-outline-light hover-scale">
                                                                     <i class="bi bi-arrow-left me-1"></i> Back
                                                                 </a>
                                                             </div>
@@ -514,15 +548,15 @@
                                                                     </div>
 
                                                                     <div class="col-md-6 mb-3">
-                                                                        <label for="level_user{{ $user->id }}"
-                                                                            class="form-label">Jabatan</label>
+                                                                        <label for="department{{ $user->id }}"
+                                                                            class="form-label">Department</label>
                                                                         <input type="text"
-                                                                            class="form-control bg-light @error('level_user') is-invalid @enderror hover-form"
-                                                                            id="level_user{{ $user->id }}"
-                                                                            name="level_user"
-                                                                            value="{{ old('level_user', $user->level_user) }}"
+                                                                            class="form-control bg-light @error('department') is-invalid @enderror hover-form"
+                                                                            id="department{{ $user->id }}"
+                                                                            name="department"
+                                                                            value="{{ old('department', $user->department) }}"
                                                                             required>
-                                                                        @error('level_user')
+                                                                        @error('department')
                                                                             <div class="invalid-feedback">{{ $message }}
                                                                             </div>
                                                                         @enderror
@@ -635,8 +669,7 @@
                                                         <div class="text-muted">
                                                             <i class="fas fa-search-minus fs-2 mb-3 d-block"></i>
                                                             @if (request('search'))
-                                                                <p class="mb-0">Tidak ditemukan data user yang sesuai dengan
-                                                                    pencarian
+                                                                <p class="mb-0">No user data found that matches the search
                                                                     "{{ request('search') }}"</p>
                                                                 <small class="d-block mt-2">
                                                                     @if (request('filter_type') && request('filter_type') != 'all')
@@ -645,13 +678,13 @@
                                                                 </small>
                                                                 <a href="{{ route('datauser.index', ['show' => request('show')]) }}"
                                                                     class="btn btn-sm btn-outline-secondary mt-3">
-                                                                    <i class="fas fa-redo-alt me-1"></i>Reset Pencarian
+                                                                    <i class="fas fa-redo-alt me-1"></i>Reset
                                                                 </a>
                                                             @else
-                                                                <p class="mb-0">Belum ada data user yang tersedia</p>
+                                                                <p class="mb-0">No user data available yet</p>
                                                                 <a href="{{ route('datauser.create') }}"
                                                                     class="btn btn-sm btn-primary mt-3">
-                                                                    <i class="fas fa-plus-circle me-1"></i>Tambah User
+                                                                    <i class="fas fa-plus-circle me-1"></i>Add User
                                                                 </a>
                                                             @endif
                                                         </div>

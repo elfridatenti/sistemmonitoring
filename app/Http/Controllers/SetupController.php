@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Notifikasi;
 use App\Traits\HasNotifications;
 use App\Events\NewNotification;
+use Illuminate\Support\Facades\Storage;
 
 class SetupController extends Controller
 {
@@ -37,17 +38,14 @@ class SetupController extends Controller
                 ->whereHas('mesin', function ($q) {
                     $q->whereNotNull('molding_mc');
                 });
-        } else {
-            // Other roles see all records but only with status 'Menunggu' or 'Sedang Diproses'
-            $query->whereIn('status', ['Menunggu', 'Sedang Diproses', 'Menunggu QC Approve']);
+        } elseif ($user->role === 'teknisi') {
+            // Filter hanya setup yang maintenance_name-nya adalah user yang sedang login
+            // dan statusnya belum completed
+            $query->where('maintenance_name', $user->id);
         }
-
-
-
         if ($status) {
             $query->where('status', $status);
         }
-
 
         // Apply search filters if search term exists
         if ($search) {
@@ -122,10 +120,26 @@ class SetupController extends Controller
     {
         $user = Auth::user();
         $mesins = Mesin::all();
-        $mouldCategories = ['Mold Connector', 'Mold Inner', 'Mold Plug', 'Mold Grommet'];
-        return view('setup.create', compact('user', 'mesins', 'mouldCategories'));
-    }
 
+
+        $busyTeknisiIds = array_merge(
+            Setup::whereIn('status', ['Waiting', 'In Progress', 'Waiting QC Approve', 'Pending QC'])
+                ->whereNotNull('maintenance_name')
+                ->pluck('maintenance_name')
+                ->toArray(),
+            Downtime::whereIn('status', ['Waiting', 'In Progress', 'Waiting QC Approve'])
+                ->whereNotNull('maintenance_repair')
+                ->pluck('maintenance_repair')
+                ->toArray()
+        );
+
+        // Ambil teknisi yang tersedia
+        $availableTeknisiUsers = User::where('role', 'teknisi')
+            ->whereNotIn('id', $busyTeknisiIds)
+            ->get();
+        $mouldCategories = ['Mold Connector', 'Mold Inner', 'Mold Plug', 'Mold Grommet'];
+        return view('setup.create', compact('user', 'mesins', 'mouldCategories', 'availableTeknisiUsers'));
+    }
 
     public function store(Request $request)
     {
@@ -135,6 +149,29 @@ class SetupController extends Controller
             'leader' => 'required',
             'line' => 'required',
             'schedule_datetime' => 'required|date',
+            'maintenance_name' => [
+                'required',
+                'exists:users,id,role,teknisi',
+                function ($attribute, $value, $fail) {
+                    // Cek apakah teknisi sedang menangani setup yang aktif
+                    $busyInSetup = Setup::whereIn('status', ['Waiting', 'In Progress', 'Waiting QC Approve'])
+                        ->where('maintenance_name', $value)
+                        ->exists();
+
+                    // Cek apakah teknisi sedang menangani downtime yang aktif
+                    $busyInDowntime = Downtime::whereIn('status', ['Waiting', 'In Progress', 'Waiting QC Approve'])
+                        ->where('maintenance_repair', $value)
+                        ->exists();
+
+                    if ($busyInSetup) {
+                        $fail('This technician is working on another setup that is still active.');
+                    }
+
+                    if ($busyInDowntime) {
+                        $fail('This technician is handling active downtime.');
+                    }
+                }
+            ],
             'part_number' => 'required',
             'qty_product' => 'required|numeric',
             'customer' => 'required',
@@ -152,62 +189,57 @@ class SetupController extends Controller
                     $existingSetup = Setup::where('molding_machine', $value)
                         ->whereNull('tanggal_finish')
                         ->first();
-    
+
                     // Cek apakah mesin sudah terdaftar di downtime
                     $existingDowntime = Downtime::where('molding_machine', $value)
                         ->whereNull('tanggal_finish')
                         ->first();
-    
+
                     // Pesan error yang akan ditampilkan
                     if ($existingDowntime) {
-                        $fail('Mesin sudah terdaftar dalam Downtime aktif dengan status ' . $existingDowntime->status);
+                        $fail('Machine is already registered in active Downtime with status ' . $existingDowntime->status);
                     }
-    
+
                     if ($existingSetup) {
-                        $fail('Mesin sudah terdaftar dalam Setup aktif');
+                        $fail('The machine is already registered in the active Setup');
                     }
                 }
             ]
         ]);
 
 
-        // $validated['issued_date'] = $validated['schedule_datetime'];
-        $validated['status'] = 'Menunggu';
+
+        $validated['status'] = 'Waiting';
         $validated['tanggal_submit'] = now()->toDateString();
         $validated['jam_submit'] = now()->toTimeString();
-        // $validated['tanggal_start'] = null;
-        // $validated['jam_start'] = null;
         $validated['user_id'] = $user->id;
 
 
         $setup = Setup::create($validated);
 
         // Create notifications for technicians
-        $teknisiUsers = User::where('role', 'teknisi')->get();
+        $assignedTechnician = User::findOrFail($validated['maintenance_name']);
+        $notification = Notifikasi::create([
+            'user_id' => $assignedTechnician->id,
+            'title' => 'New Setup Job - Molding M/C ' . $validated['molding_machine'],
+            'message' => 'You have been assigned to a new setup job for Molding M/C ' . $validated['molding_machine'],
+            'is_read' => false,
+            'data' => json_encode([
+                'setup_id' => $setup->id,
+                'molding_machine' => $validated['molding_machine'],
+                'redirect_url' => route('setup.index', $setup->id)
+            ])
+        ]);
+        event(new NewNotification($notification));
 
-        foreach ($teknisiUsers as $teknisi) {
-            $notification = Notifikasi::create([
-                'user_id' => $teknisi->id,
-                'title' => 'Permintaan Setup Baru',
-                'message' => 'Ada laporan Setup',
-                'is_read' => false,
-                'data' => json_encode([
-                    'setup_id' => $setup->id,
-                    'redirect_url' => route('setup.index', $setup->id)
-                ])
-            ]);
-            broadcast(new NewNotification($notification))->toOthers();
-        }
         return redirect()->route('setup.create')
-            ->with('success', 'Permintaan setup berhasil dibuat!');
+            ->with('success', 'Setup request created successfully!');
     }
-
-
 
     public function show(Setup $setup)
     {
         $mesins = Mesin::all();
-        return view('setup.show', compact('setup', 'mesins'));
+        return view('setup.show-rekap', compact('setup', 'mesins'));
     }
 
 
@@ -223,7 +255,7 @@ class SetupController extends Controller
         try {
             $setup = Setup::findOrFail($id);
 
-            $setup->status = 'Sedang Diproses';
+            $setup->status = 'In Progress';
 
             // Gunakan data yang dikirim dari JavaScript
             $setup->tanggal_start = $request->input('date', now()->toDateString());
@@ -251,6 +283,7 @@ class SetupController extends Controller
             'leader' => 'required',
             'schedule_datetime' => 'required|date',
             'part_number' => 'required',
+            'maintenance_name' => 'required|exists:users,id',
             'qty_product' => 'required|numeric',
             'customer' => 'required',
             'mould_type' => 'required',
@@ -262,28 +295,21 @@ class SetupController extends Controller
             'job_request' => 'required'
         ]);
 
-        // $validated['issued_date'] = $validated['schedule_datetime'];
+
         // Update data
         $setup->update($validated);
-        return redirect()->route('setup.index')->with('success', 'Permintaan setup berhasil diperbarui.');
+        return back()->with('success', 'The setup request was updated successfully.');
     }
 
 
     public function destroy(Setup $setup)
     {
+        app(NotifikasiController::class)->deleteRelatedNotifications($setup->id, 'setup');
+
         $setup->delete();
         return redirect()->route('setup.index')
-            ->with('success', 'Setup berhasil dihapus.');
+            ->with('success', 'Setup request successfully deleted.');
     }
-
-
-
-
-
-
-
-
-
 
 
     //================== FINISH SETUP MANAGEMENT ===================//
@@ -292,90 +318,163 @@ class SetupController extends Controller
     public function finishSetupCreate()
     {
         // Ambil data setup yang belum selesai beserta ID nya
-        $registeredMachines = Setup::Select('molding_machine', 'mould_type_mtc', 'marking_type_mtc', 'cable_grip_size_mtc', 'issued_date')
-            ->where('status', 'Sedang Diproses')
+        $registeredMachines = Setup::Select('molding_machine', 'mould_type_mtc', 'marking_type_mtc', 'cable_grip_size_mtc')
+            ->where('status', 'In Progress')
             ->orderBy('molding_machine')
             ->get();
 
         $setups = Setup::with('mesin')
-            ->where('status', 'Sedang Diproses')
+            ->where('status', 'In Progress')
             ->get();
         return view('setup.createfinish', compact('registeredMachines', 'setups'));
     }
     public function finishSetupStore(Request $request)
     {
-
+        // Validasi input
         $validated = $request->validate([
             'molding_machine' => [
                 'required',
                 'exists:setup,id',
                 function ($attribute, $value, $fail) {
-                    // Periksa apakah setup sudah dimulai
-                    $setup = Setup::findOrFail($value);
-
+                    $setup = Setup::find($value);
+                    if (!$setup) {
+                        return $fail('Setup tidak ditemukan.');
+                    }
                     if (!$setup->tanggal_start || !$setup->jam_start) {
-                        $fail('Setup mesin molding ini belum dimulai.');
+                        return $fail('Setup of this molding machine has not yet begun.');
                     }
                     if ($setup->tanggal_finish) {
-                        $fail('Setup mesin molding ini sudah pernah diselesaikan.');
+                        return $fail('This molding machine setup has already been completed.');
                     }
                 }
             ],
-            'issued_date' => 'required|date',
-            'asset_no_bt' => 'required',
-            'maintenance_name' => 'required',
-            'setup_problem' => 'required',
-            'mould_type_mtc' => 'required',
-            'marking_type_mtc' => 'required',
-            'cable_grip_size_mtc' => 'required',
-            'ampere_rating' => 'required'
+
+            'asset_no_bt' => 'required|string',
+            'setup_problem' => 'required|string',
+            'mould_type_mtc' => 'required|string',
+            'marking_type_mtc' => 'required|string',
+            'cable_grip_size_mtc' => 'required|string',
+            'ampere_rating' => 'required|string',
+            'dokumentasi' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,pdf|max:5120' // Menerima file gambar, video, dan PDF
         ]);
 
-
         try {
-            // Gunakan model yang konsisten
-            $finishSetup = Setup::findOrFail($validated['molding_machine']);
+            $setup = Setup::findOrFail($validated['molding_machine']);
 
+            // Siapkan data untuk update
+            $updateData = [
 
-            $result = $finishSetup->update([
-                'issued_date' => $validated['issued_date'],
                 'asset_no_bt' => $validated['asset_no_bt'],
-                'maintenance_name' => $validated['maintenance_name'],
                 'setup_problem' => $validated['setup_problem'],
                 'mould_type_mtc' => $validated['mould_type_mtc'],
                 'marking_type_mtc' => $validated['marking_type_mtc'],
                 'cable_grip_size_mtc' => $validated['cable_grip_size_mtc'],
                 'ampere_rating' => $validated['ampere_rating'],
-                'status' => 'Menunggu QC Approve'
+                'status' => 'Waiting QC Approve'
+            ];
 
-            ]);
-
-
-            if ($result) {
-
-                // Notify IPQC
-                $ipqcUsers = User::where('role', 'ipqc')->get();
-                foreach ($ipqcUsers as $ipqc) {
-                    Notifikasi::create([
-                        'user_id' => $ipqc->id,
-                        'title' => 'Setup Menunggu Approval',
-                        'message' => "Ada setup yang memerlukan approval QC untuk mesin {$finishSetup->molding_machine}",
-                        'is_read' => false,
-                        'data' => json_encode([
-                            'downtime_id' => $finishSetup->id,
-                            'redirect_url' => route('rekapsetup.index', $finishSetup->id)
-                        ])
-                    ]);
-                }
-                return redirect()->route('finishsetup.create')->with('success', 'Setup berhasil diselesaikan dan menunggu QC approve');
-            } else {
-                return redirect()->back()->with('error', 'Gagal menyimpan setup');
+            // Upload dokumentasi jika ada
+            if ($request->hasFile('dokumentasi')) {
+                $file = $request->file('dokumentasi');
+                $filename = 'setup' . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('dokumentasi/', $filename, 'public');
+                $updateData['dokumentasi'] = 'dokumentasi/' . $filename;
             }
+
+            // Update setup record
+            $setup->update($updateData);
+
+            // Kirim notifikasi ke IPQC
+            $ipqcUsers = User::where('role', 'ipqc')->get();
+            foreach ($ipqcUsers as $ipqc) {
+                Notifikasi::create([
+                    'user_id' => $ipqc->id,
+                    'title' => 'Setup Waiting Approval',
+                    'message' => "There are setups that require QC approval for machines {$setup->molding_machine}",
+                    'is_read' => false,
+                    'data' => json_encode([
+                        'downtime_id' => $setup->id,
+                        'redirect_url' => route('setup.index', $setup->id)
+                    ])
+                ]);
+            }
+
+            return redirect()->route('setup.index')->with('success', 'Setup successfully Finish and waiting QC Approve');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menyimpan setup: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to complete setup:  ' . $e->getMessage());
         }
     }
+    public function finishSetupEdit($id)
+    {
+        // Get the specific setup that needs editing
+        $setup = Setup::findOrFail($id);
 
+        // Check if the setup is in the correct state to be edited
+        if ($setup->status !== 'Waiting QC Approve') {
+            return redirect()->back()->with('error', 'Only setups with Waiting QC Approve status can be changed');
+        }
+
+        return view('setup.editfinish', compact('setup'));
+    }
+
+    public function finishSetupUpdate(Request $request, $id)
+    {
+        $validated = $request->validate([
+
+            'asset_no_bt' => 'required',
+            'setup_problem' => 'required',
+            'mould_type_mtc' => 'required',
+            'marking_type_mtc' => 'required',
+            'cable_grip_size_mtc' => 'required',
+            'ampere_rating' => 'required',
+            'dokumentasi' => 'nullable|file|mimes:jpg,jpeg,png,mp4,mov,pdf|max:5120' // Menerima file gambar, video, dan PDF
+        ]);
+
+        try {
+            // Find the setup by ID
+            $setup = Setup::findOrFail($id);
+
+            // Verify that the setup is in the correct state to be updated
+            if ($setup->status !== 'Waiting QC Approve') {
+                return redirect()->back()->with('error', 'Only setups with a status of Waiting QC Approve can be changed.');
+            }
+
+            // Prepare update data
+            $updateData = [
+
+                'asset_no_bt' => $validated['asset_no_bt'],
+                'setup_problem' => $validated['setup_problem'],
+                'mould_type_mtc' => $validated['mould_type_mtc'],
+                'marking_type_mtc' => $validated['marking_type_mtc'],
+                'cable_grip_size_mtc' => $validated['cable_grip_size_mtc'],
+                'ampere_rating' => $validated['ampere_rating']
+            ];
+
+            // Upload dokumentasi if provided
+            if ($request->hasFile('dokumentasi')) {
+                $file = $request->file('dokumentasi');
+                $filename = 'setup' . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('dokumentasi/', $filename, 'public');
+                $updateData['dokumentasi'] = 'dokumentasi/' . $filename;
+
+                // Delete old file if exists (optional)
+                if ($setup->dokumentasi && Storage::disk('public')->exists($setup->dokumentasi)) {
+                    Storage::disk('public')->delete($setup->dokumentasi);
+                }
+            }
+
+            // Update the setup with all data including dokumentasi if provided
+            $result = $setup->update($updateData);
+
+            if ($result) {
+                return redirect()->back()->with('success', 'Setup request updated successfully.');
+            } else {
+                return redirect()->back()->with('error', 'Failed to update setup request.');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update setup:  ' . $e->getMessage());
+        }
+    }
 
 
 
@@ -384,8 +483,8 @@ class SetupController extends Controller
         try {
             $setup = Setup::findOrFail($id);
             // Validasi status
-            if ($setup->status !== 'Menunggu QC Approve') {
-                return redirect()->back()->with('error', 'Status setup tidak valid untuk persetujuan');
+            if ($setup->status !== 'Waiting QC Approve') {
+                return redirect()->back()->with('error', 'Invalid setup status for approval');
             }
 
             // Validasi input dengan pesan bahasa Indonesia
@@ -394,45 +493,190 @@ class SetupController extends Controller
                 'relief' => 'required|in:Pass,Failed',
                 'mismatch' => 'required|in:Pass,Failed',
                 'pin_bar_connector' => 'required|in:Pass,Failed',
+                'marking_remarks' => 'required_if:marking,Failed',
+                'relief_remarks' => 'required_if:relief,Failed',
+                'mismatch_remarks' => 'required_if:mismatch,Failed',
+                'pin_bar_connector_remarks' => 'required_if:pin_bar_connector,Failed',
                 'qc_approve' => [
                     'required',
                     'string',
                     'regex:/^[^\/]+\/[^\/]+$/',
                 ]
             ], [
-                'marking.required' => 'Status marking check wajib dipilih',
-                'marking.in' => 'Status marking check tidak valid',
-                'relief.required' => 'Status relief check wajib dipilih',
-                'relief.in' => 'Status relief check tidak valid',
-                'mismatch.required' => 'Status mismatch check wajib dipilih',
-                'mismatch.in' => 'Status mismatch check tidak valid',
-                'pin_bar_connector.required' => 'Status pin bar check wajib dipilih',
-                'pin_bar_connector.in' => 'Status pin bar check tidak valid',
-                'qc_approve.required' => 'Kolom nama dan badge QC wajib diisi',
-                'qc_approve.regex' => 'Format penulisan QC harus sesuai: nama/badge',
+                'marking.required' => 'Status marking check must be selected',
+                'marking.in' => 'Status marking check is invalid',
+                'relief.required' => 'Status relief check must be selected',
+                'relief.in' => 'Status relief check is invalid',
+                'mismatch.required' => 'Status mismatch check must be selected',
+                'mismatch.in' => 'Status mismatch check is invalid',
+                'pin_bar_connector.required' => 'Status pin bar check must be selected',
+                'pin_bar_connector.in' => 'Status pin bar check is invalid',
+                'marking_remarks.required_if' => 'Please provide remarks for marking check failure',
+                'relief_remarks.required_if' => 'Please provide remarks for relief check failure',
+                'mismatch_remarks.required_if' => 'Please provide remarks for mismatch check failure',
+                'pin_bar_connector_remarks.required_if' => 'Please provide remarks for pin bar connector check failure',
+                'qc_approve.required' => 'QC name and badge field must be filled',
+                'qc_approve.regex' => 'QC writing format must be: name/badge',
             ]);
 
-            // Update data setup
-            $setup->update([
-                'marking' => $validated['marking'],
-                'relief' => $validated['relief'],
-                'mismatch' => $validated['mismatch'],
-                'pin_bar_connector' => $validated['pin_bar_connector'],
+            // Determine the status based on check results
+            $allPassed =
+                $validated['marking'] === 'Pass' &&
+                $validated['relief'] === 'Pass' &&
+                $validated['mismatch'] === 'Pass' &&
+                $validated['pin_bar_connector'] === 'Pass';
+
+            // Ubah status menjadi "Pending QC" jika ada yang gagal, "Completed" jika semua lulus
+            $newStatus = $allPassed ? 'Completed' : 'Pending QC';
+
+            // Prepare data for update
+            $updateData = [
                 'qc_approve' => $validated['qc_approve'],
-                'tanggal_finish' => now()->toDateString(),
-                'jam_finish' => now()->format('H:i'),
-                'status' => 'Completed'
-            ]);
+                'status' => $newStatus
+            ];
 
-            return redirect()->route('rekapsetup.index')
-                ->with('success', 'Setup berhasil disetujui dan telah selesai');
+            // Set the values for each check
+            // If failed, store the value with remarks; if passed, store just "Pass"
+            $updateData['marking'] = $validated['marking'] === 'Failed'
+                ? 'Failed: ' . $request->input('marking_remarks')
+                : 'Pass';
+
+            $updateData['relief'] = $validated['relief'] === 'Failed'
+                ? 'Failed: ' . $request->input('relief_remarks')
+                : 'Pass';
+
+            $updateData['mismatch'] = $validated['mismatch'] === 'Failed'
+                ? 'Failed: ' . $request->input('mismatch_remarks')
+                : 'Pass';
+
+            $updateData['pin_bar_connector'] = $validated['pin_bar_connector'] === 'Failed'
+                ? 'Failed: ' . $request->input('pin_bar_connector_remarks')
+                : 'Pass';
+
+            // Only set finish date and time if all checks pass
+            if ($allPassed) {
+                $updateData['tanggal_finish'] = now()->toDateString();
+                $updateData['jam_finish'] = now()->format('H:i');
+            }
+
+            // Update the setup record
+            $setup->update($updateData);
+
+            if ($allPassed) {
+                return redirect()->route('setup.index')
+                    ->with('success', 'Setup successfully approved and completed');
+            } else {
+                return redirect()->route('setup.index')
+                    ->with('warning', 'Setup was checked but some checks failed. Status changed to Pending QC.');
+            }
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()
                 ->withErrors($e->validator)
                 ->withInput();
         } catch (\Exception $e) {
             return redirect()->back()
-                ->with('error', 'Gagal Appeove: ' . $e->getMessage());
+                ->with('error', 'Failed to Approve: ' . $e->getMessage());
+        }
+    }
+
+    public function QcUpdate(Request $request, $id)
+    {
+        try {
+            $setup = Setup::findOrFail($id);
+            // Validate status
+            if ($setup->status !== 'Pending QC') {
+                return redirect()->back()->with('error', 'Invalid setup status for update');
+            }
+
+            // Validate input
+            $validated = $request->validate([
+                'marking' => 'required|in:Pass,Failed',
+                'relief' => 'required|in:Pass,Failed',
+                'mismatch' => 'required|in:Pass,Failed',
+                'pin_bar_connector' => 'required|in:Pass,Failed',
+                'marking_remarks' => 'required_if:marking,Failed',
+                'relief_remarks' => 'required_if:relief,Failed',
+                'mismatch_remarks' => 'required_if:mismatch,Failed',
+                'pin_bar_connector_remarks' => 'required_if:pin_bar_connector,Failed',
+                'qc_approve' => [
+                    'required',
+                    'string',
+                    'regex:/^[^\/]+\/[^\/]+$/',
+                ]
+            ], [
+                'marking.required' => 'Status marking check must be selected',
+                'marking.in' => 'Status marking check is invalid',
+                'relief.required' => 'Status relief check must be selected',
+                'relief.in' => 'Status relief check is invalid',
+                'mismatch.required' => 'Status mismatch check must be selected',
+                'mismatch.in' => 'Status mismatch check is invalid',
+                'pin_bar_connector.required' => 'Status pin bar check must be selected',
+                'pin_bar_connector.in' => 'Status pin bar check is invalid',
+                'marking_remarks.required_if' => 'Please provide remarks for marking check failure',
+                'relief_remarks.required_if' => 'Please provide remarks for relief check failure',
+                'mismatch_remarks.required_if' => 'Please provide remarks for mismatch check failure',
+                'pin_bar_connector_remarks.required_if' => 'Please provide remarks for pin bar connector check failure',
+                'qc_approve.required' => 'QC name and badge field must be filled',
+                'qc_approve.regex' => 'QC writing format must be: name/badge',
+            ]);
+
+            // Determine the status based on check results
+            $allPassed =
+                $validated['marking'] === 'Pass' &&
+                $validated['relief'] === 'Pass' &&
+                $validated['mismatch'] === 'Pass' &&
+                $validated['pin_bar_connector'] === 'Pass';
+
+            // Update status to "Completed" if all checks pass, keep as "Pending QC" otherwise
+            $newStatus = $allPassed ? 'Completed' : 'Pending QC';
+
+            // Prepare data for update
+            $updateData = [
+                'qc_approve' => $validated['qc_approve'],
+                'status' => $newStatus
+            ];
+
+            // Set the values for each check
+            // If failed, store the value with remarks; if passed, store just "Pass"
+            $updateData['marking'] = $validated['marking'] === 'Failed'
+                ? 'Failed: ' . $request->input('marking_remarks')
+                : 'Pass';
+
+            $updateData['relief'] = $validated['relief'] === 'Failed'
+                ? 'Failed: ' . $request->input('relief_remarks')
+                : 'Pass';
+
+            $updateData['mismatch'] = $validated['mismatch'] === 'Failed'
+                ? 'Failed: ' . $request->input('mismatch_remarks')
+                : 'Pass';
+
+            $updateData['pin_bar_connector'] = $validated['pin_bar_connector'] === 'Failed'
+                ? 'Failed: ' . $request->input('pin_bar_connector_remarks')
+                : 'Pass';
+
+            // Only set finish date and time if all checks pass
+            if ($allPassed) {
+                $updateData['tanggal_finish'] = now()->toDateString();
+                $updateData['jam_finish'] = now()->format('H:i');
+            }
+
+            // Update the setup record
+            $setup->update($updateData);
+
+            if ($allPassed) {
+                return redirect()->route('setup.index')
+                    ->with('success', 'Setup successfully updated and completed');
+            } else {
+                return redirect()->route('setup.index')
+                    ->with('warning', 'Setup has been updated but some checks still failed. Status remains as Pending QC.');
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to Update: ' . $e->getMessage());
         }
     }
     public function RekapIndex(Request $request)
@@ -448,7 +692,7 @@ class SetupController extends Controller
 
             // Filter berdasarkan role user
             if ($user->role === 'ipqc') {
-                $query->where('status', 'Menunggu QC Approve')
+                $query->where('status', 'Waiting QC Approve')
                     ->whereNull('qc_approve');
             } else {
                 // Untuk leader, teknisi, dan admin
@@ -462,18 +706,23 @@ class SetupController extends Controller
             return redirect()->back()->with('error', 'Gagal memuat data rekap: ' . $e->getMessage());
         }
     }
+
+
     public function RekapShow($setup)
     {
         $setup = Setup::findOrFail($setup);
-        return view('setup.show-rekap', compact('setup'));
+        $user = Auth::user();
+        $mesins = Mesin::all(); // Assuming you have a Mesin model
+        return view('setup.show-rekap', compact('setup', 'mesins', 'user'));
     }
+
     public function RekapEdit($setup)
     {
         // Ambil data setup untuk diedit
         $setup = Setup::findOrFail($setup);
-        return view('setup.editrekap', compact('setup'));
+        $mesins = Mesin::all(); // Assuming you have a Mesin model
+        return view('setup.show-rekap', compact('setup', 'mesins '));
     }
-
     public function RekapUpdate(Request $request, $setup)
     {
         // Comprehensive validation
@@ -507,7 +756,7 @@ class SetupController extends Controller
         $setup = Setup::findOrFail($setup);
         $setup->update($validatedData);
 
-        return redirect()->route('rekapsetup.index')
+        return redirect()->route('setup.index')
             ->with('success', 'Rekap setup berhasil diperbarui');
     }
 
@@ -546,7 +795,7 @@ class SetupController extends Controller
             $setup = Setup::create($validated);
 
             // Redirect dengan pesan sukses
-            return redirect()->route('rekapsetup.index')
+            return redirect()->route('setup.index')
                 ->with('success', 'Data Setup berhasil disimpan');
         } catch (\Exception $e) {
             // Tangani error dengan logging atau pesan error
@@ -560,7 +809,7 @@ class SetupController extends Controller
     public function RekapDestroy(Setup $setup)
     {
         $setup->delete();
-        return redirect()->route('rekapsetup.index')
+        return redirect()->route('setup.index')
             ->with('success', 'Rekap setup berhasil dihapus.');
     }
 
@@ -622,20 +871,20 @@ class SetupController extends Controller
                             $q->where('molding_mc', 'like', "%{$search}%");
                         });
                         break;
-                    
+
                     default: // 'all'
                         // Search across all relevant fields
                         $query->where(function ($q) use ($search) {
                             $q->where('line', 'like', "%{$search}%")
-                            ->orWhere('leader', 'like', "%{$search}%")
-                            ->orWhere('maintenance_name', 'like', "%{$search}%")
-                            ->orWhere('qc_approve', 'like', "%{$search}%")
+                                ->orWhere('leader', 'like', "%{$search}%")
+                                ->orWhere('maintenance_name', 'like', "%{$search}%")
+                                ->orWhere('qc_approve', 'like', "%{$search}%")
                                 ->orWhere('mould_type', 'like', "%{$search}%")
                                 ->orWhere('part_number', 'like', "%{$search}%")
                                 ->orWhere('customer', 'like', "%{$search}%")
                                 ->orWhere('schedule_datetime', 'like', "%{$search}%")
                                 ->orWhere('mould_category', 'like', "%{$search}%")
-                                
+
                                 ->orWhereHas('mesin', function ($mq) use ($search) {
                                     $mq->where('molding_mc', 'like', "%{$search}%");
                                 });

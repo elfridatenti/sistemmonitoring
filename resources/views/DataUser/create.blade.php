@@ -243,14 +243,14 @@
                 <div class="card form-card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h4 class="mb-0">{{ __('Create New User') }}</h4>
+                        <h4 class="mb-0">{{ __('CREATE DATA USER') }}</h4>
                             {{-- <span class="step-badge">User Registration</span> --}}
                         </div>
                         <div class="form-notes">
-                            <p class="mb-0"><i class="fas fa-info-circle me-2"></i> Perhatikan hal-hal berikut:</p>
+                            <p class="mb-0"><i class="fas fa-info-circle me-2"></i> Note the following:</p>
                             <ul class="mb-0 mt-1">
-                                <li>Pastikan semua kolom terisi dengan benar</li>
-                                <li>Periksa kembali semua data sebelum menyimpan</li>
+                                <li>Make sure all fields are filled in correctly</li>
+                                <li>Recheck all data before saving</li>
                             </ul>
                         </div>
                     </div>
@@ -288,7 +288,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group mb-4">
                                         <label for="badge" class="form-label">
-                                            <i class="bi bi-badge-ad me-1"></i>Badge Number
+                                            <i class="bi bi-badge-ad me-1"></i>Badge
                                         </label>
                                         <input type="text" class="form-control @error('badge') is-invalid @enderror"
                                             id="badge" name="badge" value="{{ old('badge') }}" required
@@ -315,14 +315,14 @@
 
                                 <div class="col-md-4">
                                     <div class="form-group mb-4">
-                                        <label for="level_user" class="form-label">
-                                            <i class="bi bi-layers me-1"></i>Jabatan
+                                        <label for="department" class="form-label">
+                                            <i class="bi bi-layers me-1"></i>Department
                                         </label>
-                                        <input type="text" class="form-control @error('level_user') is-invalid @enderror"
-                                            id="level_user" name="level_user"
-                                            value="{{ old('level_user', $user->level_user ?? '') }}" required
-                                            placeholder="Enter jabatan">
-                                        @error('level_user')
+                                        <input type="text" class="form-control @error('department') is-invalid @enderror"
+                                            id="department" name="department"
+                                            value="{{ old('department', $user->department ?? '') }}" required
+                                            placeholder="Enter department">
+                                        @error('department')
                                             <span class="invalid-feedback">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -333,7 +333,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group mb-4">
                                         <label for="email" class="form-label">
-                                            <i class="bi bi-envelope me-1"></i>Email Address
+                                            <i class="bi bi-envelope me-1"></i>Email
                                         </label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror"
                                             id="email" name="email" value="{{ old('email') }}" required
@@ -347,7 +347,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group mb-4">
                                         <label for="no_tlpn" class="form-label">
-                                            <i class="bi bi-telephone me-1"></i>Phone Number
+                                            <i class="bi bi-telephone me-1"></i>Phone
                                         </label>
                                         <input type="tel" class="form-control @error('no_tlpn') is-invalid @enderror"
                                             id="no_tlpn" name="no_tlpn" value="{{ old('no_tlpn') }}" required
@@ -400,7 +400,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-4">
                                         <label for="role" class="form-label">
-                                            <i class="bi bi-shield-lock me-1"></i>System Role
+                                            <i class="bi bi-shield-lock me-1"></i>Role
                                         </label>
                                         <div class="select-wrapper">
                                             <select class="form-control @error('role') is-invalid @enderror"

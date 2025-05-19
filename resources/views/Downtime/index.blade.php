@@ -26,44 +26,45 @@
         }
 
         .table th,
-    .table td {
-        padding: 12px 8px;
-        vertical-align: middle;
-        white-space: nowrap;
-        width: auto;
-        font-weight: 500;
-        text-align: left;
-        color: #3c3f46;
-        border: 1.5px solid #e6e7e8; 
-    }
-    
-    .table thead th {
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #dee2e6;
-        border: 1px solid #dee2e6;
-        font-weight: 600;
-        text-transform: uppercase;
-        color: #78818f;
-        text-align: center;
-        letter-spacing: 0.2px;
-        font-size: 0.80rem;
-        /* Ukuran font diperkecil */
-        padding: 0.75rem 0.6rem;
-        vertical-align: middle;
-        
-    }
-  
+        .table td {
+            padding: 12px 8px;
+            vertical-align: middle;
+            white-space: nowrap;
+            width: auto;
+            font-weight: 500;
+            text-align: left;
+            color: #3c3f46;
+            border: 1.5px solid #e6e7e8;
+        }
 
-    /* Table Body Styling */
-    .table tbody td {
-        padding: 12px 15px;
-        text-align: left;
-        vertical-align: middle;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 0.80rem;
-    }
+        .table thead th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            border: 1px solid #dee2e6;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #78818f;
+            text-align: center;
+            letter-spacing: 0.2px;
+            font-size: 0.80rem;
+            /* Ukuran font diperkecil */
+            padding: 0.75rem 0.6rem;
+            vertical-align: middle;
+
+        }
+
+
+        /* Table Body Styling */
+        .table tbody td {
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.80rem;
+        }
+
         /* Secondary Header Styling (date/time row) */
         .table th.submit-date,
         .table th.submit-time,
@@ -81,9 +82,9 @@
 
         }
 
-       
 
-        
+
+
         .table th.badge-column {
             width: 100px;
         }
@@ -184,6 +185,7 @@
             overflow: hidden;
             transition: transform 0.3s ease;
         }
+
         .card-header {
             padding: 1.5rem;
             border-bottom: 1px solid #f0f0f0;
@@ -226,7 +228,7 @@
 
         .alert-success {
             background-color: #e7f4ee;
-            color: #156e45;
+            color: #156e45;w
         }
 
         .alert-danger {
@@ -252,44 +254,43 @@
                 <div class="card form-card">
                     <div class="card-header bg-gradient-primary">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h4 class="mb-0 text-white">DOWNTIME MOLDING</h4>
+                            <h4 class="mb-0 text-white">LIST OF MACHINE MOLDING DOWNTIME</h4>
                         </div>
-                        <p class="mb-0 text-white-50">Daftar Laporan Downtime Mesin Molding</p>
+                        <p class="mb-0 text-white-50">"Molding Machine Downtime Report List"</p>
                     </div>
-
-
-                   
-
 
                     <div class="card-body">
                         @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-check-circle me-2"></i>
-                                <div>{{ session('success') }}</div>
+                            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <div>{{ session('success') }}</div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                             </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-exclamation-circle me-2"></i>
-                                <div>{{ session('error') }}</div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <div>{{ session('error') }}</div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
                             </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-        
-                    @if (session('info'))
-                    <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <div>{{ session('info') }}</div>
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
+                        @endif
+
+                        @if (session('info'))
+                            <div class="alert alert-info alert-dismissible fade show border-0 shadow-sm">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <div>{{ session('info') }}</div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
                         <!-- Satu form untuk semua filter -->
                         <form action="{{ route('downtime.index') }}" method="GET">
                             <div class="row align-items-end">
@@ -309,111 +310,80 @@
                                     </div>
                                 </div>
 
-
                                 <div class="col-md-3">
-                                    @if (auth()->user()->role === 'leader' || auth()->user()->role === 'admin' || auth()->user()->role === 'teknisi')
-                                        <div class="form-group">
-                                            <label class="form-label text-muted small fw-medium mb-1">Filter Status</label>
-                                            <div class="d-flex gap-2">
-                                                <select name="status" class="form-select form-select-sm shadow-sm" style="cursor: pointer;">
-                                                    <option value="">Semua</option>
-
-                                                    @if (auth()->user()->role === 'leader')
-                                                        <option value="Menunggu"
-                                                            {{ request('status') === 'Menunggu' ? 'selected' : '' }}>
-                                                            Menunggu</option>
-                                                        <option value="Sedang Diproses"
-                                                            {{ request('status') === 'Sedang Diproses' ? 'selected' : '' }}>
-                                                            Sedang Diproses
-                                                        </option>
-                                                        <option value="Menunggu QC Approve"
-                                                            {{ request('status') === 'Menunggu QC Approve' ? 'selected' : '' }}>
-                                                            Menunggu QC
-                                                            Approve
-                                                        </option>
-                                                        <option value="Completed"
-                                                            {{ request('status') === 'Completed' ? 'selected' : '' }}>
-                                                            Completed</option>
-                                                    @elseif (auth()->user()->role === 'admin' || 'teknisi')
-                                                        <option value="Menunggu"
-                                                            {{ request('status') === 'Menunggu' ? 'selected' : '' }}>
-                                                            Menunggu</option>
-                                                        <option value="Sedang Diproses"
-                                                            {{ request('status') === 'Sedang Diproses' ? 'selected' : '' }}>
-                                                            Sedang Diproses
-                                                        </option>
-                                                        <option value="Menunggu QC Approve"
-                                                            {{ request('status') === 'Menunggu QC Approve' ? 'selected' : '' }}>
-                                                            Menunggu QC
-                                                            Approve
-                                                        </option>
-                                                    @endif
-                                                </select>
-                                                <button type="submit" name="filter_status"
-                                                    class="btn btn-xs btn-info text-white d-flex align-items-center"
-                                                    style="font-size: 0.8rem; height: 30px;" style="cursor: pointer;">
-                                                    Filter
-                                                </button>
-                                            </div>
+                                    <div class="form-group">
+                                        <label class="form-label text-muted small fw-medium mb-1">Filter Status</label>
+                                        <div class="d-flex gap-2">
+                                            <select name="status" class="form-select form-select-sm shadow-sm"
+                                                style="cursor: pointer;">
+                                                <option value="">All Status</option>
+                                                <option value="Waiting"
+                                                    {{ request('status') === 'Waiting' ? 'selected' : '' }}>
+                                                    Waiting</option>
+                                                <option value="In Progress"
+                                                    {{ request('status') === 'In Progress' ? 'selected' : '' }}>
+                                                    In Progress</option>
+                                                <option value="Waiting QC Approve"
+                                                    {{ request('status') === 'Waiting QC Approve' ? 'selected' : '' }}>
+                                                    Waiting QC Approve</option>
+                                                <option value="Completed"
+                                                    {{ request('status') === 'Completed' ? 'selected' : '' }}>
+                                                    Completed</option>
+                                            </select>
                                         </div>
-                                    @endif
+                                    </div>
                                 </div>
 
                                 <div class="col"></div>
 
                                 <div class="col-md-3">
+                                    {{-- Filter By --}}
                                     <div class="form-group">
-                                        <label class="form-label text-muted small fw-medium  mb-1">Filter By</label>
+                                        <label class="form-label text-muted small fw-medium mb-1">Filter By</label>
                                         <select name="filter_type" class="form-select form-select-sm shadow-sm"
                                             style="cursor: pointer;">
                                             <option value="all" {{ request('filter_type') == 'all' ? 'selected' : '' }}>
-                                                Semua
-                                            </option>
+                                                All</option>
                                             <option value="badge"
-                                                {{ request('filter_type') == 'badge' ? 'selected' : '' }}>Badge
-                                            </option>
+                                                {{ request('filter_type') == 'badge' ? 'selected' : '' }}>Badge</option>
                                             <option value="line"
-                                                {{ request('filter_type') == 'line' ? 'selected' : '' }}>Line
-                                            </option>
+                                                {{ request('filter_type') == 'line' ? 'selected' : '' }}>Line</option>
                                             <option value="leader"
-                                                {{ request('filter_type') == 'leader' ? 'selected' : '' }}>Leader
-                                            </option>
+                                                {{ request('filter_type') == 'leader' ? 'selected' : '' }}>Leader</option>
                                             <option value="defect_category"
                                                 {{ request('filter_type') == 'defect_category' ? 'selected' : '' }}>
-                                                Kategori Defect
-                                            </option>
+                                                Defect Category</option>
                                             <option value="molding_mc"
-                                                {{ request('filter_type') == 'molding_mc' ? 'selected' : '' }}>Mesin
-                                                Molding
+                                                {{ request('filter_type') == 'molding_mc' ? 'selected' : '' }}>Molding M/C
                                             </option>
                                         </select>
                                     </div>
                                 </div>
 
-
-
                                 <div class="col-md-3">
+                                    {{-- Search --}}
                                     <div class="form-group">
-                                        <label class="form-label text-muted small fw-medium mb-2">Search</label>
-                                        <div class="input-group input-group-sm shadow-sm">
-                                            <input type="text" name="search" class="form-control"
-                                                placeholder="Cari data..." value="{{ request('search') }}">
-                                            <button type="submit" class="btn btn-primary px-3">
-                                                <i class="fas fa-search me-1"></i>
+                                        <label class="form-label text-muted small fw-medium mb-1">Search</label>
+                                        <div class="d-flex align-items-center">
+                                            <div class="input-group input-group-sm shadow-sm">
+                                                <input type="text" name="search" class="form-control"
+                                                    placeholder="Search..." value="{{ request('search') }}">
+
+                                                @if (request('search'))
+                                                    <a href="{{ route('downtime.index', ['status' => request('status'), 'filter_type' => request('filter_type')]) }}"
+                                                        class="btn btn-outline-secondary btn-sm">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                            <button type="submit" class="btn btn-info btn-sm text-white px-2 ms-2">
+                                                Filter
                                             </button>
-                                            @if (request('search'))
-                                                <a href="{{ route('downtime.index', ['show' => request('show')]) }}"
-                                                    class="btn btn-outline-secondary">
-                                                    <i class="fas fa-times"></i>
-                                                </a>
-                                            @endif
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </form>
-
-
 
                         <div class="mt-4">
                             <div class="table-responsive">
@@ -434,25 +404,25 @@
                                                 Start <i class="fas fa-chevron-up collapse-indicator"></i>
                                             </th>
 
-                                            @if (auth()->user()->role === 'leader')
-                                                <th colspan="2" class="text-center collapsible-header"
-                                                    data-group="finish">
-                                                    Finish <i class="fas fa-chevron-up collapse-indicator"></i>
-                                                </th>
-                                            @endif
+
+                                            <th colspan="2" class="text-center collapsible-header"
+                                                data-group="finish">
+                                                Finish <i class="fas fa-chevron-up collapse-indicator"></i>
+                                            </th>
+
 
                                             <th rowspan="2">Status</th>
-                                            <th rowspan="2">Aksi</th>
+                                            <th rowspan="2">Actions</th>
                                         </tr>
                                         <tr>
                                             <th class="text-center submit-date">Date</th>
                                             <th class="text-center submit-time time-column">Time</th>
                                             <th class="text-center start-date">Date</th>
                                             <th class="text-center start-time time-column">Time</th>
-                                            @if (auth()->user()->role === 'leader')
-                                                <th class="text-center finish-date">Date</th>
-                                                <th class="text-center finish-time time-column">Time</th>
-                                            @endif
+
+                                            <th class="text-center finish-date">Date</th>
+                                            <th class="text-center finish-time time-column">Time</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -472,31 +442,31 @@
                                                         {{ $downtime->defect_category }}
                                                     @endif
                                                 </td>
-                                                <td class="submit-date text-center">{{ $downtime->tanggal_submit_formatted ?? 'N/A' }}
+                                                <td class="submit-date text-center">
+                                                    {{ $downtime->tanggal_submit_formatted ?? 'N/A' }}
                                                 </td>
                                                 <td class="submit-time time-column text-center">
                                                     {{ $downtime->jam_submit_formatted ?? 'N/A' }}
                                                 </td>
                                                 <!-- Start columns -->
-                                                <td class="start-date text-center">{{ $downtime->tanggal_start_formatted ?? 'N/A' }}
+                                                <td class="start-date text-center">
+                                                    {{ $downtime->tanggal_start_formatted ?? 'N/A' }}
                                                 </td>
                                                 <td class="start-time time-column text-center">
                                                     {{ $downtime->jam_start_formatted ?? 'N/A' }}
                                                 </td>
-                                                <!-- Finish columns -->
-                                                @if (auth()->user()->role === 'leader')
-                                                    <td class="finish-date text-center">
-                                                        {{ $downtime->tanggal_finish_formatted ?? 'N/A' }}
-                                                    </td>
-                                                    <td class="finish-time time-column text-center">
-                                                        {{ $downtime->jam_finish_formatted ?? 'N/A' }}</td>
-                                                @endif
+
+                                                <td class="finish-date text-center">
+                                                    {{ $downtime->tanggal_finish_formatted ?? 'N/A' }}
+                                                </td>
+                                                <td class="finish-time time-column text-center">
+                                                    {{ $downtime->jam_finish_formatted ?? 'N/A' }}</td>
 
 
                                                 <td class="status-cell">
                                                     <div class="text-center">
                                                         @if (auth()->user()->role === 'teknisi')
-                                                            @if ($downtime->status === 'Menunggu')
+                                                            @if ($downtime->status === 'Waiting')
                                                                 <button id="startBtn{{ $downtime->id }}"
                                                                     class="btn btn-success btn-start"
                                                                     data-id="{{ $downtime->id }}">
@@ -505,9 +475,9 @@
                                                             @else
                                                                 <span
                                                                     class="badge
-                                                            @if ($downtime->status === 'Completed') bg-success
-                                                            @elseif($downtime->status === 'Sedang Diproses') bg-warning 
-                                                            @elseif($downtime->status === 'Menunggu QC Approve') bg-secondary
+                                                            @if ($downtime->status === 'Completed') bg-success 
+                                                            @elseif($downtime->status === 'In Progress') bg-warning 
+                                                            @elseif($downtime->status === 'Waiting QC Approve') bg-secondary
                                                             @else bg-danger @endif">
                                                                     {{ $downtime->status }}
                                                                 </span>
@@ -516,10 +486,10 @@
                                                             <span
                                                                 class="badge
                                                         @if ($downtime->status === 'Completed') bg-success
-                                                        @elseif($downtime->status === 'Sedang Diproses') bg-warning
-                                                        @elseif($downtime->status === 'Menunggu QC Approve') bg-secondary
+                                                        @elseif($downtime->status === 'In Progress') bg-warning
+                                                        @elseif($downtime->status === 'Waiting QC Approve') bg-secondary
                                                         @else bg-danger @endif">
-                                                                {{ $downtime->status ?? 'Menunggu' }}
+                                                                {{ $downtime->status ?? 'Waiting' }}
                                                             </span>
                                                         @endif
                                                     </div>
@@ -527,22 +497,22 @@
                                                 <td>
                                                     <div style="gap: 2px;">
                                                         {{-- View button - accessible to all users --}}
-                                                        <a href="{{ route('downtime.show', $downtime) }}"
-                                                           class="btn btn-sm btn-outline-primary">
-                                                           <i class="far fa-eye "></i>
+                                                        <a href="{{ route('rekapdowntime.show', $downtime) }}"
+                                                            class="btn btn-sm btn-outline-primary">
+                                                            <i class="far fa-eye "></i>
                                                         </a>
 
-                                                        {{-- Edit button - only for leader when status is 'Menunggu' --}}
-                                                        @if (auth()->user()->role === 'leader' && $downtime->status === 'Menunggu')
+                                                        @if (auth()->user()->role === 'ipqc' && $downtime->status === 'Waiting QC Approve')
                                                             <button type="button" class="btn btn-sm btn-outline-primary"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#editModal{{ $downtime->id }}">
-                                                                <i class="far fa-edit "></i>
+                                                                data-bs-target="#approveModal{{ $downtime->id }}">
+                                                                <i class="far fa-check-circle "></i> Aprrove
                                                             </button>
                                                         @endif
 
-                                                        {{-- Delete button - for leader when status is 'Menunggu' OR admin when status is 'Completed' --}}
-                                                        @if (auth()->user()->role === 'leader' && $downtime->status === 'Menunggu')
+                                                        {{-- Delete button - for leader when status is 'Waiting' OR admin when status is 'Completed' --}}
+                                                        @if (auth()->user()->role === 'leader' && $downtime->status === 'Waiting')
+                                                        @if (auth()->user()->role === 'admin' && $downtime->status === 'Completed')
                                                             {{-- // (auth()->user()->role === 'admin' && $downtime->status === 'Completed')) --}}
                                                             <button type="button" class="btn btn-sm btn-outline-primary"
                                                                 data-bs-toggle="modal"
@@ -550,176 +520,99 @@
                                                                 <i class="far fa-trash-alt "></i>
                                                             </button>
                                                         @endif
+                                                        
+
+                                                        @if (auth()->user()->role == 'teknisi' && $downtime->status == 'In Progress')
+                                                            <a href="{{ route('finishdowntime.create', ['downtime_id' => $downtime->id]) }}"
+                                                                class="btn btn-sm btn-outline-success">
+                                                                <i class="far fa-check-circle "></i> Finish
+                                                            </a>
+                                                        @endif
                                                     </div>
                                                 </td>
                                             </tr>
-
-                                            <!-- Edit Modal -->
-                                            <div class="modal fade" id="editModal{{ $downtime->id }}" tabindex="-1" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                    <div class="modal-content border-0 shadow-lg rounded-4">
-                                                        <form method="POST" action="{{ route('downtime.update', $downtime) }}" id="editForm{{ $downtime->id }}">
+                                            <!-- Approve Modal -->
+                                            <div class="modal fade" id="approveModal{{ $downtime->id }}" tabindex="-1"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-sm">
+                                                    <div class="modal-content rounded-3 shadow-sm">
+                                                        <form method="POST"
+                                                            action="{{ route('rekapdowntime.approve', $downtime->id) }}"
+                                                            id="approveForm{{ $downtime->id }}">
                                                             @csrf
-                                                            @method('PUT')
-                                            
-                                                            <!-- Modal Header -->
-                                                            <div class="modal-header bg-gradient-primary border-bottom-0 rounded-top-4">
-                                                                <div class="d-flex align-items-center">
-                                                                    <span class="modal-icon bg-white bg-opacity-10 rounded-circle p-3 me-3">
-                                                                        <i class="fas fa-clock text-light fs-4"></i>
-                                                                    </span>
-                                                                    <h5 class="modal-title  mb-0">EDIT DOWNTIME</h5>
-                                                                </div>
-                                                                <a href="{{ route('downtime.index') }}" class="btn btn-outline-light hover-scale">
-                                                                    <i class="bi bi-arrow-left me-1"></i> Back
-                                                                </a>
+                                                            @method('POST')
+                                                            <div class="modal-header bg-success text-white">
+                                                                <h6 class="modal-title">Quality Check
+                                                                    Approval</h6>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+
                                                             </div>
-                                            
-                                                            <!-- Modal Body -->
-                                                            <div class="modal-body p-4">
-                                                                <!-- Basic Information Section -->
-                                                                <div class="mb-4">
-                                                                    <h6 class="text-primary mb-3">Request Item by Production</h6>
-                                                                    <div class="row g-3">
-                                                                        <div class="col-md-4">
-                                                                            <label for="leader{{ $downtime->id }}" class="form-label">Leader</label>
-                                                                            <input type="text" class="form-control bg-light @error('leader') is-invalid @enderror"
-                                                                                id="leader{{ $downtime->id }}" name="leader"
-                                                                                value="{{ old('leader', $downtime->user->nama) }}" readonly style="cursor: not-allowed;"
-                                                                                required>
-                                                                            @error('leader')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                                            @enderror
+                                                            <div class="modal-body py-3">
+                                                                <div class="mb-3">
+                                                                    <label for="qc_approve{{ $downtime->id }}"
+                                                                        class="form-label">QC
+                                                                        Approve <span class="text-danger">*</span></label>
+                                                                    <input type="text"
+                                                                        class="form-control form-control-sm @error('qc_approve') is-invalid @enderror"
+                                                                        id="qc_approve{{ $downtime->id }}"
+                                                                        name="qc_approve" required
+                                                                        placeholder="Contoh: tengku/1233">
+                                                                    <small class="text-muted">
+                                                                        Format: name/badge
+                                                                    </small>
+                                                                    @error('qc_approve')
+                                                                        <div class="invalid-feedback">{{ $message }}
                                                                         </div>
-                                                                        <div class="col-md-4">
-                                                                            <label for="line{{ $downtime->id }}" class="form-label">Line</label>
-                                                                            <input type="text" class="form-control bg-light @error('line') is-invalid @enderror"
-                                                                                id="line{{ $downtime->id }}" name="line"
-                                                                                value="{{ old('line', $downtime->line) }}" required>
-                                                                            @error('line')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                                            @enderror
+                                                                    @enderror
+                                                                </div>
+
+                                                                <div class="mb-2">
+                                                                    <label for="production_verify{{ $downtime->id }}"
+                                                                        class="form-label">Production Verify <span
+                                                                            class="text-danger">*</span></label>
+                                                                    <input type="text"
+                                                                        class="form-control form-control-sm @error('production_verify') is-invalid @enderror"
+                                                                        id="production_verify{{ $downtime->id }}"
+                                                                        name="production_verify" required
+                                                                        placeholder="Contoh: tengku/1233">
+                                                                    <small class="text-muted">
+                                                                        Format: name/badge
+                                                                    </small>
+                                                                    @error('production_verify')
+                                                                        <div class="invalid-feedback">{{ $message }}
                                                                         </div>
-                                                                        <div class="col-md-4">
-                                                                            <label for="badge{{ $downtime->id }}" class="form-label">Badge</label>
-                                                                            <input type="text" class="form-control bg-light @error('badge') is-invalid @enderror"
-                                                                                id="badge{{ $downtime->id }}" name="badge"
-                                                                                value="{{ old('badge', $downtime->badge) }}" required>
-                                                                            @error('badge')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                                            @enderror
-                                                                        </div>
-                                            
-                                                                        <div class="col-md-4">
-                                                                            <label for="raised_operator{{ $downtime->id }}" class="form-label">Raised Operator</label>
-                                                                            <input type="text" class="form-control bg-light @error('raised_operator') is-invalid @enderror"
-                                                                                id="raised_operator{{ $downtime->id }}" name="raised_operator"
-                                                                                value="{{ old('raised_operator', $downtime->raised_operator) }}">
-                                                                            @error('raised_operator')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                                            @enderror
-                                                                        </div>
-                                                                        <div class="col-md-4">
-                                                                            <label for="raised_ipqc{{ $downtime->id }}" class="form-label">Raised IPQC</label>
-                                                                            <input type="text" class="form-control bg-light @error('raised_ipqc') is-invalid @enderror"
-                                                                                id="raised_ipqc{{ $downtime->id }}" name="raised_ipqc"
-                                                                                value="{{ old('raised_ipqc', $downtime->raised_ipqc) }}">
-                                                                            @error('raised_ipqc')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                                            @enderror
-                                                                        </div>
-                                            
-                                                                        <div class="col-md-4">
-                                                                            <label for="molding_machine{{ $downtime->id }}" class="form-label">Molding Machine</label>
-                                                                            <select class="form-select bg-light @error('molding_machine') is-invalid @enderror"
-                                                                                id="molding_machine{{ $downtime->id }}" name="molding_machine" required>
-                                                                                <option value="">Select Machine</option>
-                                                                                @foreach ($mesins as $mesin)
-                                                                                    <option value="{{ $mesin->id }}"
-                                                                                        {{ old('molding_machine', $downtime->molding_machine) == $mesin->id ? 'selected' : '' }}>
-                                                                                        {{ $mesin->molding_mc }}
-                                                                                    </option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                            @error('molding_machine')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                                            @enderror
-                                                                        </div>
-                                            
-                                                                        <!-- Machine & Defect Section -->
-                                                                        <div class="col-12 mt-4">
-                                                                            <div class="form-check mb-2">
-                                                                                <input type="checkbox" class="form-check-input is_custom_defect"
-                                                                                    id="is_custom_defect_{{ $downtime->id }}" name="is_custom_defect" value="1"
-                                                                                    {{ !is_numeric($downtime->defect_category) ? 'checked' : '' }}>
-                                                                                <label class="form-check-label" for="is_custom_defect_{{ $downtime->id }}">
-                                                                                    Use Custom Defect Category
-                                                                                </label>
-                                                                            </div>
-                                            
-                                                                            <div class="row g-2">
-                                                                                <div class="col-md-4">
-                                                                                    <!-- Standard Defect Select -->
-                                                                                    <div id="standard_defect_div">
-                                                                                        <label for="defect_category{{ $downtime->id }}" class="form-label">Defect Category</label>
-                                                                                        <select class="form-select bg-light" id="defect_category{{ $downtime->id }}" name="defect_category">
-                                                                                            @foreach ($defects as $defect)
-                                                                                                <option value="{{ $defect->id }}"
-                                                                                                    {{ is_numeric($downtime->defect_category) && $downtime->defect_category == $defect->id ? 'selected' : '' }}>
-                                                                                                    {{ $defect->defect_category }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                        </select>
-                                                                                    </div>
-                                            
-                                                                                    <!-- Custom Defect Input -->
-                                                                                    <div id="custom_defect_div" style="display: none;">
-                                                                                        <label for="custom_defect_category{{ $downtime->id }}" class="form-label">Custom Defect Category</label>
-                                                                                        <input type="text" class="form-control bg-light" id="custom_defect_category{{ $downtime->id }}" 
-                                                                                            name="custom_defect_category"
-                                                                                            value="{{ !is_numeric($downtime->defect_category) ? $downtime->defect_category : '' }}">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                            
-                                                                        <!-- Problem Description -->
-                                                                        <div class="col-12 mt-4">
-                                                                            <h6 class="text-primary mb-3">Problem Details</h6>
-                                                                            <label for="problem_defect{{ $downtime->id }}" class="form-label">Problem Description</label>
-                                                                            <textarea class="form-control bg-light @error('problem_defect') is-invalid @enderror" 
-                                                                                id="problem_defect{{ $downtime->id }}" name="problem_defect" 
-                                                                                style="height: 100px">{{ old('problem_defect', $downtime->problem_defect) }}</textarea>
-                                                                            @error('problem_defect')
-                                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                                            @enderror
-                                                                        </div>
-                                                                    </div>
+                                                                    @enderror
                                                                 </div>
                                                             </div>
-                                                            <!-- Modal Footer -->
-                                                            <div class="modal-footer bg-light">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                <button type="submit" class="btn btn-primary">Update</button>
+                                                            <div class="modal-footer py-2">
+                                                                <button type="button" class="btn btn-sm btn-secondary"
+                                                                    data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-sm btn-success">
+                                                                    Save
+                                                                </button>
                                                             </div>
                                                         </form>
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <!-- Delete Modal -->
                                             <div class="modal fade" id="deleteModal{{ $downtime->id }}" tabindex="-1"
                                                 aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header bg-danger text-white">
-                                                            <h5 class="modal-title" id="deleteModalLabel{{ $downtime->id }}">
-                                                                <i class="fas fa-exclamation-triangle me-2"></i>Konfirmasi Penghapusan
+                                                            <h5 class="modal-title"
+                                                                id="deleteModalLabel{{ $downtime->id }}">
+                                                                <i class="fas fa-exclamation-triangle me-2"></i>Delete
+                                                                Confirmation
                                                             </h5>
                                                             <button type="button" class="btn-close"
                                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah yakin untuk menghapus downtime ini?</p>
+                                                            <p>Are you sure you want to delete this downtime?</p>
                                                             <p class="text-muted">
                                                                 Badge: {{ $downtime->badge }}<br>
                                                                 Line: {{ $downtime->line }}<br>
@@ -727,14 +620,16 @@
                                                             </p>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                                <i class="fas fa-times me-1"></i>Batal
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">
+                                                                <i class="fas fa-times me-1"></i>Cancel
                                                             </button>
-                                                            <form action="{{ route('downtime.destroy', $downtime) }}" method="POST">
+                                                            <form action="{{ route('downtime.destroy', $downtime) }}"
+                                                                method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">
-                                                                    <i class="fas fa-trash-alt me-1"></i>Hapus
+                                                                    <i class="fas fa-trash-alt me-1"></i>Delete
                                                                 </button>
                                                             </form>
                                                         </div>
@@ -747,8 +642,7 @@
                                                     <div class="text-muted">
                                                         <i class="fas fa-search-minus fs-2 mb-3 d-block"></i>
                                                         @if (request('search'))
-                                                            <p class="mb-0">Tidak ditemukan data yang sesuai dengan
-                                                                pencarian
+                                                            <p class="mb-0">No data found that matches the search
                                                                 "{{ request('search') }}"</p>
                                                             <small class="d-block mt-2">
                                                                 @if (request('filter_type') && request('filter_type') != 'all')
@@ -757,10 +651,10 @@
                                                             </small>
                                                             <a href="{{ route('downtime.index', ['show' => request('show')]) }}"
                                                                 class="btn btn-sm btn-outline-secondary mt-3">
-                                                                <i class="fas fa-redo-alt me-1"></i>Reset Pencarian
+                                                                <i class="fas fa-redo-alt me-1"></i>Reset Search
                                                             </a>
                                                         @else
-                                                            <p class="mb-0">Belum ada data yang tersedia</p>
+                                                            <p class="mb-0">No data available yet</p>
                                                         @endif
                                                     </div>
                                                 </td>
@@ -813,7 +707,6 @@
         });
 
         // ===== START BUTTON HANDLING =====
-
         $('.btn-start').on('click', function() {
             const btnStart = $(this);
             const downtimeId = btnStart.data('id');
@@ -822,19 +715,15 @@
             btnStart.prop('disabled', true);
 
             const currentDate = new Date();
-
-            // Ubah format tanggal menjadi DD-MM-YYYY
-            const day = String(currentDate.getDate()).padStart(2, '0');
-            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const year = currentDate.getFullYear();
-            const formattedDate = `${day}-${month}-${year}`;
-
+            const formattedDate = currentDate.toISOString().split('T')[0];
             const formattedTime = currentDate.toLocaleTimeString('en-GB', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
                 hour12: false
             });
+
+
 
             // Immediately update UI
             const statusCell = btnStart.closest('.status-cell');
@@ -843,14 +732,30 @@
 
             // Update UI immediately before AJAX call
             statusCell.html(`
-                        <div class="text-center">
-                            <span class="badge bg-warning">
-                                Sedang Diproses
-                            </span>
-                        </div>
-                    `);
+                                        <div class="text-center">
+                                            <span class="badge bg-warning">
+                                                
+
+                                In Progress
+                                            </span>
+                                        </div>
+                                    `);
             dateCell.text(formattedDate);
             timeCell.text(formattedTime);
+
+            // Add finish button immediately if user is teknisi
+            const actionsCell = row.find('td:last-child').find('div');
+            @if (auth()->user()->role == 'teknisi')
+                // Add finish button right away
+                if (actionsCell.find('.btn-finish').length === 0) {
+                    actionsCell.append(`
+                                                <a href="{{ route('finishdowntime.create', '') }}/${downtimeId}" 
+                                                   class="btn btn-sm btn-outline-success btn-finish ms-1">
+                                                    <i class="fas fa-check"></i> Finish
+                                                </a>
+                                            `);
+                }
+            @endif
 
             // Send data to server
             $.ajax({
@@ -863,34 +768,24 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Optional: Update UI with server response if needed
-                        if (response.status !== 'Sedang Diproses') {
-                            statusCell.html(`
-                                        <div class="text-center">
-                                            <span class="badge bg-warning">
-                                                ${response.status}
-                                            </span>
-                                        </div>
-                                    `);
-                        }
-                        if (response.date !== formattedDate) {
-                            dateCell.text(response.date);
-                        }
-                        if (response.time !== formattedTime) {
-                            timeCell.text(response.time);
-                        }
+                        // UI is already updated
+                        // We don't need to do anything else here since we've already added the Finish button
                     }
                 },
                 error: function(xhr) {
                     // Revert UI changes if the server request fails
                     btnStart.prop('disabled', false);
                     statusCell.html(`
-                                <button id="startBtn${downtimeId}" class="btn btn-success btn-start" data-id="${downtimeId}">
-                                    Start
-                                </button>
-                            `);
+                                                <button id="startBtn${downtimeId}" class="btn btn-success btn-start" data-id="${downtimeId}">
+                                                    Start
+                                                </button>
+                                            `);
                                     dateCell.text('N/A');
                                     timeCell.text('N/A');
+
+                                    // Remove the finish button if it was added
+                                    actionsCell.find('.btn-finish').remove();
+
                                     alert('Error starting downtime: ' + (xhr.responseJSON ? xhr.responseJSON
                                         .message : 'Unknown error'));
                                 }

@@ -293,7 +293,7 @@
                 <div class="logo-circle">
                    <img src="{{ Storage::url('images/logo2.png') }}" class="object-contain w-4/5 h-4/5">
                 </div>
-                <div class="app-title">SISTEM INFORMASI MOLDING</div>
+                <div class="app-title">MOLDING INFORMATION SYSTEM</div>
                 <div class="company-name">PT VOLEX INDONESIA</div>
             </div>
 

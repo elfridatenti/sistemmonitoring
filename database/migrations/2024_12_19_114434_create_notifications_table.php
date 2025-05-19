@@ -13,6 +13,8 @@ return new class extends Migration
             $table->Integer('user_id'); // Pastikan tipe data sama dengan kolom `id` di tabel `users`
             $table->string('title');
             $table->text('message');
+                $table->integer('related_id');
+                $table->string('related_type');
             $table->boolean('is_read')->default(false);
             $table->string('data');
             $table->timestamps();

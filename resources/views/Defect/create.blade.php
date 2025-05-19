@@ -156,7 +156,7 @@
         <div class="card-header">
             <h2 class="card-title">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                Add New Defect Category
+                Add New Defect
             </h2>
         </div>
         

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->integer('id')->primary();
             $table->integer('badge')->unique();
             $table->string('nama');
-            $table->string('level_user');
+            $table->string('department');
             $table->string('email')->unique();
             $table->string('no_tlpn');
             $table->string('username')->unique();

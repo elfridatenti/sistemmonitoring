@@ -8,8 +8,10 @@ use App\Http\Controllers\SetupController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MesinController;
 use App\Http\Controllers\DefectController;
-use App\Http\Controllers\NotifikasiController
-;
+use App\Http\Controllers\NotifikasiController;
+use App\Events\NewNotification;
+use App\Models\Notifikasi;
+
 
 
 // Default Route untuk halaman login
@@ -51,6 +53,7 @@ Route::post('/downtime/start/{id}', [DowntimeController::class, 'start'])->name(
 
 Route::get('finishdowntime/create', [DowntimeController::class, 'finishDowntimeCreate'])->name('finishdowntime.create');
 Route::post('finishdowntime', [DowntimeController::class, 'finishDowntimeStore'])->name('finishdowntime.store');
+Route::put('/finishdowntime/{id}', [DowntimeController::class, 'finishDowntimeUpdate'])->name('finishdowntime.update');
 
 
 
@@ -111,8 +114,22 @@ Route::get('/Rekapsetup/search', [SetupController::class, 'RekapSearch'])->name(
 
 Route::post('/rekapdowntime/{id}/approve', [DowntimeController::class, 'approve'])->name('rekapdowntime.approve');
 Route::post('/rekapsetup/{id}/approve', [SetupController::class, 'approve'])->name('rekapsetup.approve');
+Route::put('qc/update/{id}', [SetupController::class, 'QcUpdate'])->name('qc.update');
 
 Route::get('/dashboard/setup-requests', [DashboardController::class, 'getSetupRequestsCount']);
 Route::get('/dashboard/downtime-requests', [DashboardController::class, 'getDowntimeRequestsCount']);
 
-// Broadcast::routes(['middleware' => ['auth:sanctum']]);
+Route::get('/kirim-notifikasi/{userId}', function ($userId) {
+    // Dummy notifikasi (biasanya diambil dari DB atau request)
+    $notifikasi = new Notifikasi([
+        'id' => rand(1000, 9999),
+        'title' => 'Pesan Baru!',
+        'body' => 'Halo, kamu punya notifikasi baru dari sistem.',
+        'user_id' => $userId,
+    ]);
+
+    // Kirim event-nya
+    event(new NewNotification($notifikasi));
+
+    return "Notifikasi terkirim ke user ID {$userId}!";
+});

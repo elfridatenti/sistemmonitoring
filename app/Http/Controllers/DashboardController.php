@@ -19,16 +19,16 @@ class DashboardController extends Controller
         $data = [          
             'downtime' => [
                 'total' => Downtime::count(),
-                'Menunggu' => Downtime::where('status', 'Menunggu')->count(),
-                'Sedang_Diproses' => Downtime::where('status', 'Sedang Diproses')->count(),
-                'Menunggu_QC_Approve' => Downtime::where('status', 'Menunggu QC Approve')->count(),
+                'Waiting' => Downtime::where('status', 'Waiting')->count(),
+                'In_Progress' => Downtime::where('status', 'In Progress')->count(),
+                'Waiting_QC_Approve' => Downtime::where('status', 'Waiting QC Approve')->count(),
                 'Completed' => Downtime::where('status', 'Completed')->count()
             ],
             'setup' => [
                 'total' => Setup::count(),
-                'Menunggu' => Setup::where('status', 'Menunggu')->count(),
-                'Sedang Diproses' => Setup::where('status', 'Sedang Diproses')->count(),
-                'Menunggu_QC_Approve' => Setup::where('status', 'Menunggu QC Approve')->count(),
+                'Waiting' => Setup::where('status', 'Waiting')->count(),
+                'In Progress' => Setup::where('status', 'In Progress')->count(),
+                'Waiting_QC_Approve' => Setup::where('status', 'Waiting QC Approve')->count(),
                 'Completed' => Setup::where('status', 'Completed')->count()
             ],
             'user' => [

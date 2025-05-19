@@ -25,6 +25,7 @@ class Downtime extends Model
         'problem_defect',        
         'root_cause',
         'action_taken',
+        'dokumentasi',
         'production_verify',
         'qc_approve',
         'tanggal_submit',

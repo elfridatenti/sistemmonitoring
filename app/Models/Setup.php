@@ -33,10 +33,9 @@ class Setup extends Model
         'jam_submit',
         'tanggal_start',
         'jam_start',
-        
+
 
         // FinishSetup additional fields
-        'issued_date',
         'asset_no_bt',
         'maintenance_name',
         'setup_problem',
@@ -44,6 +43,7 @@ class Setup extends Model
         'marking_type_mtc',
         'cable_grip_size_mtc',
         'ampere_rating',
+        'dokumentasi',
 
         'marking',
         'relief',

@@ -25,7 +25,7 @@ class UserController extends Controller
                         $query->where('badge', 'like', '%' . $search . '%'); 
                         break;
                     case 'level_user':
-                        $query->where('level_user', 'like', '%' . $search . '%');
+                    $query->where('department', 'like', '%' . $search . '%');
                         break;
                     case 'role':
                         $query->where('role', 'like', '%' . $search . '%');
@@ -35,7 +35,7 @@ class UserController extends Controller
                         $query->where('nama', 'like', '%' . $search . '%')
                               ->orWhere('badge', 'like', '%' . $search . '%')
                               ->orWhere('role', 'like', '%' . $search . '%')
-                              ->orWhere('level_user', 'like', '%' . $search . '%');
+                        ->orWhere('department', 'like', '%' . $search . '%');
                 }
             })
             ->paginate($perPage);
@@ -114,8 +114,8 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'badge' => 'required|int|unique:users,badge',
             'nama' => 'required|string|max:255',
-            'level_user' => 'required|string',  // Dihapus Rule::in
-            'email' => 'required|email|unique:users,email',
+                'department' => 'required|string',  // Dihapus Rule::in
+                'email' => 'required|email|unique:users,email',
             'no_tlpn' => 'required|string',
             'username' => 'required|string|unique:users,username|min:4',
             'password' => 'required|string|min:8',
@@ -160,8 +160,8 @@ public function update(Request $request, User $user)
         $rules = [
             'badge' => ['required', 'int', Rule::unique('users')->ignore($user->id)],
             'nama' => 'required|string|max:255',
-            'level_user' => 'required|string',  // Dihapus Rule::in
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+                'department' => 'required|string',  // Dihapus Rule::in
+                'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'no_tlpn' => 'required|string',
             'username' => ['required', 'string', 'min:4', Rule::unique('users')->ignore($user->id)],
             'role' => ['required', 'string', Rule::in(['admin', 'leader', 'teknisi', 'ipqc'])]

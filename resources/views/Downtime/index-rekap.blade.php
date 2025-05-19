@@ -290,7 +290,7 @@
                                             {{ request('filter_type') == 'qc_approve' ? 'selected' : '' }}>
                                             QC Verify</option>
                                         <option value="molding_mc"
-                                            {{ request('filter_type') == 'molding_mc' ? 'selected' : '' }}>Mesin Molding
+                                            {{ request('filter_type') == 'molding_mc' ? 'selected' : '' }}>Molding M/C
                                         </option>
                                     </select>
                                 </div>
@@ -302,12 +302,11 @@
                                     <label class="form-label text-muted small fw-medium mb-2">
                                         Search
                                     </label>
+                                    <div class="d-flex align-items-center">
                                     <div class="input-group input-group-sm shadow-sm">
                                         <input type="text" name="search" class="form-control" placeholder="Cari data..."
                                             value="{{ request('search') }}">
-                                        <button type="submit" class="btn btn-primary px-3">
-                                            <i class="fas fa-search me-1"></i>
-                                        </button>
+                                       
                                         @if (request('search'))
                                             <a href="{{ route('rekapdowntime.search', ['show' => request('show')]) }}"
                                                 class="btn btn-outline-secondary">
@@ -315,6 +314,9 @@
                                             </a>
                                         @endif
                                     </div>
+                                    <button type="submit" class="btn btn-info btn-sm text-white px-2 ms-2">
+                                        Filter
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -412,7 +414,8 @@
                                                     @endif
 
                                                     {{-- Approve button - only for IPQC when status is waiting for approval --}}
-                                                    @if (auth()->user()->role === 'ipqc' && $downtime->status === 'Menunggu QC Approve')
+                                                    @if (auth()->user()->role === 'ipqc' && $downtime->status === '
+Waiting QC Approve')
                                                         <button type="button" class="btn btn-sm btn-outline-primary"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#approveModal{{ $downtime->id }}">
@@ -428,28 +431,28 @@
                                                 <div class="modal-content">
                                                     <div class="modal-header bg-danger text-white">
                                                         <h5 class="modal-title" id="deleteModalLabel{{ $downtime->id }}">
-                                                            <i class="fas fa-exclamation-triangle me-2"></i>Konfirmasi Penghapusan
+                                                            <i class="fas fa-exclamation-triangle me-2"></i>Delete Confirmation
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <p>Apakah yakin untuk menghapus rekap downtime ini?</p>
+                                                        <p>Are you sure you want to delete this downtime recap?</p>
                                                         <p class="text-muted">
                                                             Line: {{ $downtime->line }}<br>
-                                                            Molding Mesin: {{ $downtime->mesin->molding_mc }}<br>
+                                                            Molding M/C: {{ $downtime->mesin->molding_mc }}<br>
                                                             Maintenance Repair: {{ $downtime->maintenance_repair }}
                                                         </p>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                            <i class="fas fa-times me-1"></i>Batal
+                                                            <i class="fas fa-times me-1"></i>Cancel
                                                         </button>
                                                         <form action="{{ route('rekapdowntime.destroy', $downtime) }}" method="POST">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-danger">
-                                                                <i class="fas fa-trash-alt me-1"></i>Hapus
+                                                                <i class="fas fa-trash-alt me-1"></i>Delete
                                                             </button>
                                                         </form>
                                                     </div>
@@ -509,9 +512,9 @@
                                                         </div>
                                                         <div class="modal-footer py-2">
                                                             <button type="button" class="btn btn-sm btn-secondary"
-                                                                data-bs-dismiss="modal">Batal</button>
+                                                                data-bs-dismiss="modal">Cancel</button>
                                                             <button type="submit" class="btn btn-sm btn-success">
-                                                                Simpan
+                                                                Save
                                                             </button>
                                                         </div>
                                                     </form>
@@ -981,7 +984,7 @@
                         form.find('.is_custom_defect').trigger('change');
                     });
 
-                    // Saat modal pertama kali dibuka, simpan nilai aslinya
+                    // Saat modal pertama kali dibuka, Save nilai aslinya
                     $('.modal').on('show.bs.modal', function() {
                         const form = $(this).find('form');
                         form.find('select').each(function() {

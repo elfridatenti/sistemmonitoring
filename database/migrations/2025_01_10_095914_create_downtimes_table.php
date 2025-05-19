@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('problem_defect')->nullable();
             $table->string('root_cause')->nullable();
             $table->string('action_taken')->nullable();
+            $table->string('dokumentasi')->nullable();
             $table->string('maintenance_repair')->nullable();
             $table->string('production_verify')->nullable();
             $table->string('qc_approve')->nullable();

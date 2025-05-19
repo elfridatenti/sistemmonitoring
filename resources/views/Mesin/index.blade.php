@@ -156,12 +156,12 @@
                 <div class="card form-card">
                     <div class="card-header bg-gradient-primary">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h4 class="mb-0 text-white">MESIN MOLDING</h4>
+                            <h4 class="mb-0 text-white">ACTIVE MOLDING MACHINES</h4>
                             <a href="{{ route('mesin.create') }}" class="btn btn-sm btn-outline-light">
-                                <i class="far fa-plus-square me-1"></i> Tambah
+                                <i class="far fa-plus-square me-1"></i> Add New Machine
                             </a>
                         </div>
-                        <p class="mb-0 text-white-50">Daftar Mesin Molding</p>
+                        <p class="mb-0 text-white-50">"List of Active Molding Machines"</p>
                     </div>
 
 
@@ -226,7 +226,7 @@
                                         </label>
                                         <div class="input-group input-group-sm shadow-sm">
                                             <input type="text" name="search" class="form-control"
-                                                placeholder="Cari data..." value="{{ request('search') }}">
+                                                placeholder="Search..." value="{{ request('search') }}">
                                             <button type="submit" class="btn btn-primary px-3">
                                                 <i class="fas fa-search me-1"></i>
                                             </button>
@@ -248,8 +248,8 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 5%">No</th>
-                                            <th style="width: 75%">Molding Machine Number</th>
-                                            <th style="width: 20%">Aksi</th>
+                                            <th style="width: 75%">Molding Machine </th>
+                                            <th style="width: 20%">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -280,26 +280,26 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header bg-danger text-white">
                                                             <h5 class="modal-title" id="deleteModalLabel{{ $mesin->id }}">
-                                                                <i class="fas fa-exclamation-triangle me-2"></i>Konfirmasi Penghapusan
+                                                                <i class="fas fa-exclamation-triangle me-2"></i>Delete Confirmation
                                                             </h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                                 aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Apakah yakin untuk menghapus molding mesin ini?</p>
+                                                            <p>Are you sure you want to delete this molding machine?</p>
                                                             <p class="text-muted">
                                                                 Molding Machine: {{ $mesin->molding_mc }}
                                                             </p>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                                <i class="fas fa-times me-1"></i>Batal
+                                                                <i class="fas fa-times me-1"></i>Cancel
                                                             </button>
                                                             <form action="{{ route('mesin.destroy', $mesin) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger">
-                                                                    <i class="fas fa-trash-alt me-1"></i>Hapus
+                                                                    <i class="fas fa-trash-alt me-1"></i>Delete
                                                                 </button>
                                                             </form>
                                                         </div>
@@ -358,8 +358,7 @@
                                                     <div class="text-muted">
                                                         <i class="fas fa-search-minus fs-2 mb-3 d-block"></i>
                                                         @if (request('search'))
-                                                            <p class="mb-0">Tidak ditemukan data yang sesuai dengan
-                                                                pencarian
+                                                            <p class="mb-0">No data found that matches the search
                                                                 "{{ request('search') }}"</p>
                                                             <small class="d-block mt-2">
                                                                 @if (request('filter_type') && request('filter_type') != 'all')
@@ -368,10 +367,10 @@
                                                             </small>
                                                             <a href="{{ route('mesin.index', ['show' => request('show')]) }}"
                                                                 class="btn btn-sm btn-outline-secondary mt-3">
-                                                                <i class="fas fa-redo-alt me-1"></i>Reset Pencarian
+                                                                <i class="fas fa-redo-alt me-1"></i>Reset Search
                                                             </a>
                                                         @else
-                                                            <p class="mb-0">Belum ada data yang tersedia</p>
+                                                            <p class="mb-0">No data available yet</p>
                                                         @endif
                                                     </div>
                                                 </td>
