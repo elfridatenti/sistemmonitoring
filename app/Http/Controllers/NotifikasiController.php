@@ -72,15 +72,11 @@ class NotifikasiController extends Controller
             'user_id' => $user->id,
             'title' => $title,
             'message' => $message,
-            'is_read' => false,
-            'related_id' => $relatedId, // Tambahkan ID data terkait
-            'related_type' => $relatedType, // Tambahkan tipe data terkait
             'data' => json_encode([
                 'message' => $message,
                 'redirect_url' => $redirectUrl,
                 'type' => $type,
-                'related_id' => $relatedId,
-                'related_type' => $relatedType
+
             ])
         ]);
 
@@ -117,13 +113,13 @@ class NotifikasiController extends Controller
      * @param string $relatedType Tipe data yang dihapus (downtime, setup, dll)
      * @return int Jumlah notifikasi yang dihapus
      */
-    public function deleteRelatedNotifications($relatedId, $relatedType)
-    {
-        // Cari dan hapus semua notifikasi yang terkait dengan data tersebut
-        return Notifikasi::where('related_id', $relatedId)
-            ->where('related_type', $relatedType)
-            ->delete();
-    }
+    // public function deleteRelatedNotifications($relatedId, $relatedType)
+    // {
+    //     // Cari dan hapus semua notifikasi yang terkait dengan data tersebut
+    //     return Notifikasi::where('related_id', $relatedId)
+    //         ->where('related_type', $relatedType)
+    //         ->delete();
+    // }
 
     /**
      * Menghapus semua notifikasi dengan tipe tertentu
@@ -131,9 +127,9 @@ class NotifikasiController extends Controller
      * @param string $type Tipe notifikasi (downtime, setup, dll)
      * @return int Jumlah notifikasi yang dihapus
      */
-    public function deleteNotificationsByType($type)
-    {
-        return Notifikasi::whereRaw('LOWER(JSON_EXTRACT(data, "$.type")) = ?', [strtolower($type)])
-            ->delete();
-    }
+    // public function deleteNotificationsByType($type)
+    // {
+    //     return Notifikasi::whereRaw('LOWER(JSON_EXTRACT(data, "$.type")) = ?', [strtolower($type)])
+    //         ->delete();
+    // }
 }

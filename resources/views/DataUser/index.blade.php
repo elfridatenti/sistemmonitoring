@@ -188,8 +188,7 @@
             font-size: 0.85rem;
             margin-top: 0.25rem;
         }
-    </style>
-    <style>
+
         /* Table and Column Styling Improvements */
         .table {
             width: 100%;
@@ -239,7 +238,7 @@
         .table th.actions-column {
             width: 120px;
             /* Fixed width for action column */
-            text-align: center;
+            /* text-align: center; */
         }
 
         .actions-cell {
@@ -397,7 +396,7 @@
                                             <th>Phone</th>
                                             <th>Department</th>
                                             <th>Role</th>
-                                            <th>actions</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -432,23 +431,23 @@
                                                             <span class="badge bg-secondary">{{ $user->role }}</span>
                                                     @endswitch
                                                 </td>
-                                                <td>
-                                                    <div style="gap: 2px;">
+                                                <td class="text-center align-middle">
+                                                    <div class="d-flex justify-content-center gap-2">
                                                         <a href="{{ route('datauser.show', $user) }}"
                                                             class="btn btn-sm btn-outline-primary">
-                                                            <i class="far fa-eye "></i>
+                                                            <i class="far fa-eye"></i>
                                                         </a>
 
                                                         <button type="button" class="btn btn-sm btn-outline-primary"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#editModal{{ $user->id }}">
-                                                            <i class="far fa-edit "></i>
+                                                            <i class="far fa-edit"></i>
                                                         </button>
 
                                                         <button type="button" class="btn btn-sm btn-outline-primary"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#deleteModal{{ $user->id }}">
-                                                            <i class="far fa-trash-alt "></i>
+                                                            <i class="far fa-trash-alt"></i>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -694,7 +693,9 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                {{ $users->links() }}
+                                <div class="mt-3">
+                                    {{ $users->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>

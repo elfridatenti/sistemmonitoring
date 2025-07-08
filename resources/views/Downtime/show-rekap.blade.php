@@ -1,4 +1,4 @@
-@extends('layout.header-sidebar')
+ @extends('layout.header-sidebar')
 
 @section('content')
 
@@ -282,11 +282,6 @@
                                 </span>
                             </div>
 
-                            @if ($downtime->status == 'Completed' && Auth::user()->role == 'admin')
-                                <button type="button" id="toggleAdminEdit" class="btn btn-sm btn-primary hover-scale">
-                                    <i class="fas fa-edit me-1"></i> <span id="adminEditBtnText">Edit All Data</span>
-                                </button>
-                            @endif
                         </div>
 
                         <form id="editDowntimeForm" action="{{ route('downtime.update', $downtime) }}" method="POST"
@@ -302,8 +297,7 @@
                                         $downtime->status =='Waiting' && Auth::user()->role == 'leader')
                                         <button type="button" id="toggleEditDowntime"
                                             class="btn btn-sm btn-warning hover-scale mb-3">
-                                            <i class="fas fa-edit me-1"></i> <span id="editDowntimeBtnText">Edit
-                                                Request</span>
+                                            <i class="fas fa-edit me-1"></i> <span id="editDowntimeBtnText">Edit</span>
                                         </button>
                                     @endif
                                 </div>
@@ -351,15 +345,19 @@
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <div class="info-item">
-                                            <label class="text-muted small">Maintenance Name</label>
+                                            <label class="text-muted small">Technician Name</label>
                                             <div class="fw-medium">
                                                 <span id="maintenance_name_text">
                                                     @if ($downtime->maintenance_repair)
                                                         {{ App\Models\User::where('id', $downtime->maintenance_repair)->where('role', 'teknisi')->first()->nama ?? 'N/A' }}
-                                                    @else
-                                                        N/A
-                                                    @endif
+                                                    @else N/A @endif
                                                 </span>
+                                                  <input type="text" name="maintenance_name_display"
+                                                    id="maintenance_name_input" class="form-control d-none"
+                                                    value="@if ($downtime->maintenance_repair) {{ App\Models\User::where('id', $downtime->maintenance_repair)->where('role', 'teknisi')->first()->nama ?? 'N/A' }}@else N/A @endif"
+                                                    readonly style="cursor: not-allowed; background-color: #f8f9fa;">
+                                                <input type="hidden" name="maintenance_name"
+                                                    id="maintenance_name_hidden" value="{{ $downtime->maintenance_repair }}">
                                             </div>
                                         </div>
                                     </div>
@@ -376,8 +374,6 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="info-item">
-
-
                                             <label class="text-muted small">Line</label>
                                             <div class="fw-medium">
                                                 <span class="editable-field"
@@ -390,7 +386,7 @@
 
                                     <div class="col-md-4">
                                         <div class="info-item">
-                                            <label class="text-muted small">Molding Machine</label>
+                                            <label class="text-muted small">Molding M/C</label>
                                             <div class="fw-medium">
                                                 <span class="editable-field"
                                                     id="downtime_molding_mc_text">{{ $downtime->mesin->molding_mc ?? 'N/A' }}</span>
@@ -540,7 +536,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                 
 
                                     <!-- Documentation Modal (unchanged) -->
                                     <div class="modal fade" id="dokumentasiModal" tabindex="-1"
@@ -573,6 +569,8 @@
                                             </div>
                                         </div>
                                     </div>
+                                    </div>
+                                
                                     <!-- Save and Cancel Buttons (Initially Hidden) -->
                                     <div class="edit-buttons d-none" id="downtimeEditButtons">
                                         <button type="submit" class="btn btn-primary me-2">
@@ -711,9 +709,10 @@
             // Fields to be made editable
             const textFields = [
                 'downtime_badge', 'downtime_raised_operator', 'downtime_raised_ipqc', 'downtime_line',
-                'downtime_molding_mc', 'downtime_defect_category', 'downtime_problem_defect',
-                'maintenance_repair'
+                'downtime_molding_mc', 'downtime_defect_category', 'downtime_problem_defect'
+                
             ];
+            const readOnlyFields = ['leader', 'maintenance_name'];
 
             // Handle toggle edit mode
             if (toggleEditBtn) {
@@ -736,6 +735,21 @@
                                 inputElement.classList.add('d-block');
                             }
                         });
+
+                         // Handle read-only fields - show input but make it read-only
+                        readOnlyFields.forEach(field => {
+                            const textElement = document.getElementById(`${field}_text`);
+                            const inputElement = document.getElementById(`${field}_input`);
+                            if (textElement && inputElement) {
+                                textElement.classList.add('d-none');
+                                inputElement.classList.remove('d-none');
+                                // Make sure it's read-only and has not-allowed cursor
+                                inputElement.setAttribute('readonly', 'readonly');
+                                inputElement.style.cursor = 'not-allowed';
+                                inputElement.style.backgroundColor = '#f8f9fa';
+                            }
+                        });
+
                     } else {
                         // Switch back to view mode
                         cancelEditMode();
@@ -745,10 +759,13 @@
 
             // Function to cancel edit mode
             function cancelEditMode() {
+                 if (!toggleEditBtn) return;
                 toggleEditBtn.classList.remove('editing');
                 editBtnText.textContent = 'Edit';
                 editButtons.classList.add('d-none');
                 editButtons.classList.remove('d-block');
+                 // Hide all input fields, show text displays
+                const allFields = [...textFields, ...readOnlyFields];
 
                 // Hide input fields, show text displays
                 textFields.forEach(field => {
@@ -760,117 +777,200 @@
                         inputElement.classList.remove('d-block');
                     }
                 });
+                  // Ensure read-only fields maintain their original values
+                    readOnlyFields.forEach(field => {
+                        // Get the hidden input that contains the original value
+                        const hiddenInput = document.getElementById(`${field}_hidden`);
+                        if (hiddenInput) {
+                            // Create or update a hidden input field with the original value
+                            let input = this.querySelector(`input[name="${field}"]`);
+                            if (!input) {
+                                input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = field;
+                                this.appendChild(input);
+                            }
+                            input.value = hiddenInput.value;
+                            console.log(`Set ${field} value to:`, input.value);
+                        }
+                    });
             }
         });
     </script>
 
 
     <script>
-        // JavaScript for downtime section inline editing
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elements for downtime section
-            const toggleDowntimeEditBtn = document.getElementById('toggleDowntimeEdit');
-            const downtimeEditBtnText = document.getElementById('downtimeEditBtnText');
-            const downtimeEditButtons = document.getElementById('downtimeEditButtons');
+       // JavaScript for downtime section inline editing
+// JavaScript for downtime section inline editing
+document.addEventListener('DOMContentLoaded', function() {
+    // Elements for downtime section
+    const toggleDowntimeEditBtn = document.getElementById('toggleDowntimeEdit');
+    const downtimeEditBtnText = document.getElementById('downtimeEditBtnText');
+    const downtimeEditButtons = document.getElementById('downtimeEditButtons');
 
-            // Toggle documentation view
-            const toggleDokumentasiBtn = document.getElementById('toggleDokumentasi');
-            const dokumentasiModal = new bootstrap.Modal(document.getElementById('dokumentasiModal'));
+    // Dokumentasi elements
+    const toggleDokumentasiBtn = document.getElementById('toggleDokumentasi');
+    const dokumentasiInputWrapper = document.getElementById('dokumentasi_input_wrapper');
 
-            // Fields to be made editable in downtime section
-            const downtimeFields = [
-                'root_cause', 'action_taken'
-            ];
+    // Create fullscreen dokumentasi viewer elements
+    const fullscreenDokumentasiViewer = document.createElement('div');
+    fullscreenDokumentasiViewer.id = 'fullscreenDokumentasiViewer';
+    fullscreenDokumentasiViewer.className = 'position-fixed top-0 start-0 w-100 h-100 bg-white d-none';
+    fullscreenDokumentasiViewer.style.zIndex = '9999';
+    
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'btn btn-danger position-absolute top-0 end-0 m-3';
+    closeButton.innerHTML = '<i class="bi bi-x-lg"></i>';
+    
+    // Add content container
+    const contentContainer = document.createElement('div');
+    contentContainer.className = 'd-flex justify-content-center align-items-center h-100';
+    contentContainer.id = 'dokumentasiContent';
+    
+    // Append elements
+    fullscreenDokumentasiViewer.appendChild(closeButton);
+    fullscreenDokumentasiViewer.appendChild(contentContainer);
+    document.body.appendChild(fullscreenDokumentasiViewer);
 
-            // Documentation edit elements
-            const dokumentasiInputWrapper = document.getElementById('dokumentasi_input_wrapper');
+    // Fields to be made editable in downtime section
+    const downtimeFields = [
+        'root_cause', 'action_taken'
+    ];
 
-            // Handle dokumentasi view button
-            if (toggleDokumentasiBtn) {
-                toggleDokumentasiBtn.addEventListener('click', function() {
-                    // If in edit mode, show file input
-                    if (toggleDowntimeEditBtn && toggleDowntimeEditBtn.classList.contains('editing')) {
-                        // Toggle visibility of upload input
-                        if (dokumentasiInputWrapper.classList.contains('d-none')) {
-                            dokumentasiInputWrapper.classList.remove('d-none');
-                            dokumentasiInputWrapper.classList.add('d-block');
-                            toggleDokumentasiBtn.innerHTML =
-                                '<i class="bi bi-x-circle me-1"></i> Cancel Upload';
-                        } else {
-                            dokumentasiInputWrapper.classList.add('d-none');
-                            dokumentasiInputWrapper.classList.remove('d-block');
-                            toggleDokumentasiBtn.innerHTML =
-                                '<i class="bi bi-eye me-1"></i> View Documentation';
-                        }
-                    } else {
-                        // In view mode, show the modal with current documentation
-                        dokumentasiModal.show();
-                    }
-                });
+    // Handle toggle fullscreen for dokumentasi
+    if (toggleDokumentasiBtn) {
+        toggleDokumentasiBtn.addEventListener('click', function() {
+            const dokumentasiPath = '{{ $downtime->dokumentasi ?? "" }}';
+            const contentContainer = document.getElementById('dokumentasiContent');
+            
+            // Clear previous content
+            contentContainer.innerHTML = '';
+            
+            if (dokumentasiPath) {
+                // Detect file type by extension
+                const extension = dokumentasiPath.split('.').pop().toLowerCase();
+                
+                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+                    // Image file
+                    const img = document.createElement('img');
+                    img.src = '/storage/' + dokumentasiPath;
+                    img.className = 'img-fluid';
+                    img.style.maxHeight = '95vh';
+                    contentContainer.appendChild(img);
+                } else if (['mp4', 'mov', 'webm', 'avi'].includes(extension)) {
+                    // Video file
+                    const video = document.createElement('video');
+                    video.src = '/storage/' + dokumentasiPath;
+                    video.className = 'img-fluid';
+                    video.controls = true;
+                    video.autoplay = true;
+                    video.style.maxHeight = '95vh';
+                    contentContainer.appendChild(video);
+                } else if (extension === 'pdf') {
+                    // PDF file
+                    const embed = document.createElement('embed');
+                    embed.src = '/storage/' + dokumentasiPath;
+                    embed.type = 'application/pdf';
+                    embed.className = 'w-100 h-100';
+                    contentContainer.appendChild(embed);
+                } else {
+                    // Unsupported file type
+                    contentContainer.innerHTML = '<div class="alert alert-warning">Unsupported file format</div>';
+                }
+            } else {
+                contentContainer.innerHTML = '<div class="alert alert-info">No documentation available</div>';
             }
+            
+            // Show fullscreen viewer
+            fullscreenDokumentasiViewer.classList.remove('d-none');
+        });
+    }
+    
+    // Close fullscreen viewer when close button is clicked
+    closeButton.addEventListener('click', function() {
+        fullscreenDokumentasiViewer.classList.add('d-none');
+    });
 
-            // Handle toggle edit mode for downtime section
-            if (toggleDowntimeEditBtn) {
-                toggleDowntimeEditBtn.addEventListener('click', function() {
-                    const isEditing = toggleDowntimeEditBtn.classList.contains('editing');
-                    if (!isEditing) {
-                        // Switch to edit mode
-                        toggleDowntimeEditBtn.classList.add('editing');
-                        downtimeEditBtnText.textContent = 'Cancel';
-                        downtimeEditButtons.classList.remove('d-none');
-                        downtimeEditButtons.classList.add('d-block');
+    // Handle toggle edit mode for downtime section
+    if (toggleDowntimeEditBtn) {
+        toggleDowntimeEditBtn.addEventListener('click', function() {
+            const isEditing = toggleDowntimeEditBtn.classList.contains('editing');
+            if (!isEditing) {
+                // Switch to edit mode
+                toggleDowntimeEditBtn.classList.add('editing');
+                downtimeEditBtnText.textContent = 'Cancel';
+                downtimeEditButtons.classList.remove('d-none');
+                downtimeEditButtons.classList.add('d-block');
 
-                        // Show input fields, hide text displays
-                        downtimeFields.forEach(field => {
-                            const textElement = document.getElementById(`${field}_text`);
-                            const inputElement = document.getElementById(`${field}_input`);
-                            if (textElement && inputElement) {
-                                textElement.classList.add('d-none');
-                                inputElement.classList.remove('d-none');
-                                inputElement.classList.add('d-block');
-                            }
-                        });
-
-                        // Update dokumentasi button to show it's editable
-                        if (toggleDokumentasiBtn) {
-                            toggleDokumentasiBtn.innerHTML =
-                                '<i class="bi bi-upload me-1"></i> Upload Documentation';
-                        }
-                    } else {
-                        // Switch back to view mode
-                        cancelDowntimeEditMode();
-                    }
-                });
-            }
-
-            // Function to cancel edit mode for downtime section
-            function cancelDowntimeEditMode() {
-                toggleDowntimeEditBtn.classList.remove('editing');
-                downtimeEditBtnText.textContent = 'Edit';
-                downtimeEditButtons.classList.add('d-none');
-                downtimeEditButtons.classList.remove('d-block');
-
-                // Hide input fields, show text displays
+                // Show input fields, hide text displays
                 downtimeFields.forEach(field => {
                     const textElement = document.getElementById(`${field}_text`);
                     const inputElement = document.getElementById(`${field}_input`);
                     if (textElement && inputElement) {
-                        textElement.classList.remove('d-none');
-                        inputElement.classList.add('d-none');
-                        inputElement.classList.remove('d-block');
+                        textElement.classList.add('d-none');
+                        inputElement.classList.remove('d-none');
+                        inputElement.classList.add('d-block');
                     }
                 });
 
-                // Reset dokumentasi button and hide upload input
-                if (toggleDokumentasiBtn) {
-                    toggleDokumentasiBtn.innerHTML = '<i class="bi bi-eye me-1"></i> View Documentation';
-                }
+                // Show dokumentasi upload field
                 if (dokumentasiInputWrapper) {
-                    dokumentasiInputWrapper.classList.add('d-none');
-                    dokumentasiInputWrapper.classList.remove('d-block');
+                    dokumentasiInputWrapper.classList.remove('d-none');
+                    dokumentasiInputWrapper.classList.add('d-block');
                 }
+
+                // Change the dokumentasi button appearance
+                if (toggleDokumentasiBtn) {
+                    toggleDokumentasiBtn.innerHTML =
+                        '<i class="bi bi-eye me-1"></i> View Current Documentation';
+                }
+            } else {
+                // Switch back to view mode
+                cancelDowntimeEditMode();
             }
         });
+    }
+
+    // Function to cancel edit mode for downtime section
+    function cancelDowntimeEditMode() {
+        if (toggleDowntimeEditBtn) {
+            toggleDowntimeEditBtn.classList.remove('editing');
+        }
+
+        if (downtimeEditBtnText) {
+            downtimeEditBtnText.textContent = 'Edit';
+        }
+
+        if (downtimeEditButtons) {
+            downtimeEditButtons.classList.add('d-none');
+            downtimeEditButtons.classList.remove('d-block');
+        }
+
+        // Hide input fields, show text displays
+        downtimeFields.forEach(field => {
+            const textElement = document.getElementById(`${field}_text`);
+            const inputElement = document.getElementById(`${field}_input`);
+            if (textElement && inputElement) {
+                textElement.classList.remove('d-none');
+                inputElement.classList.add('d-none');
+                inputElement.classList.remove('d-block');
+            }
+        });
+
+        // Hide dokumentasi upload field
+        if (dokumentasiInputWrapper) {
+            dokumentasiInputWrapper.classList.add('d-none');
+            dokumentasiInputWrapper.classList.remove('d-block');
+        }
+
+        // Restore the dokumentasi button appearance
+        if (toggleDokumentasiBtn) {
+            toggleDokumentasiBtn.innerHTML = '<i class="bi bi-eye me-1"></i> View Documentation';
+        }
+    }
+});
     </script>
 
 @endsection

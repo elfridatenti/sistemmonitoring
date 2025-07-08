@@ -39,7 +39,7 @@ class DefectController extends Controller
         Defect::create($validated);
 
         return redirect()->route('defect.index')
-            ->with('success', 'Defect berhasil ditambahkan');
+            ->with('success', 'Defect successfully added');
     }
 
     public function edit(Defect $Defect)
@@ -57,7 +57,7 @@ class DefectController extends Controller
         $defect->update($validated);
 
         return redirect()->route('defect.index')
-            ->with('success', 'Defect berhasil diupdate');
+            ->with('success', 'Defect successfully updated');
     }
 
     public function destroy(Defect $Defect)
@@ -65,6 +65,6 @@ class DefectController extends Controller
         $Defect->delete();
 
         return redirect()->route('defect.index')
-            ->with('success', 'Defect berhasil dihapus');
+            ->with('success', 'Defect successfully deleted');
     }
 }

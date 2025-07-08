@@ -298,11 +298,7 @@
                                 </span>
                             </div>
 
-                            @if ($setup->status == 'Completed' && Auth::user()->role == 'admin')
-                                <button type="button" id="toggleAdminEdit" class="btn btn-sm btn-primary hover-scale">
-                                    <i class="fas fa-edit me-1"></i> <span id="adminEditBtnText">Edit</span>
-                                </button>
-                            @endif
+                          
                         </div>
 
 
@@ -367,7 +363,7 @@
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <div class="info-item">
-                                            <label class="text-muted small">Maintenance Name</label>
+                                            <label class="text-muted small">Technician Name</label>
                                             <div class="fw-medium">
                                                 <span class="editable-field" id="maintenance_name_text">
                                                     @if ($setup->maintenance_name)
@@ -417,7 +413,7 @@
                                             <div class="fw-medium">
                                                 <span class="editable-field"
                                                     id="qty_product_text">{{ $setup->qty_product ?? 'N/A' }}</span>
-                                                <input type="number" name="qty_product" id="qty_product_input"
+                                                <input type="number" name="qty_product"  min="1" id="qty_product_input"
                                                     class="form-control d-none" value="{{ $setup->qty_product }}">
                                             </div>
                                         </div>
@@ -500,7 +496,7 @@
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <div class="info-item">
-                                            <label class="text-muted small">Molding mesin</label>
+                                            <label class="text-muted small">Molding M/C</label>
                                             <div class="fw-medium">
                                                 <span class="editable-field"
                                                     id="molding_machine_text">{{ $setup->mesin->molding_mc ?? 'N/A' }}</span>
@@ -588,10 +584,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <!-- Second row of fields (3 columns) -->
-                                        <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <div class="info-item">
                                                     <label class="text-muted small">Marking Type (MTC)</label>
@@ -604,6 +597,10 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+
+                                        <!-- Second row of fields (3 columns) -->
+                                        <div class="row mb-3">                                            
                                             <div class="col-md-4">
                                                 <div class="info-item">
                                                     <label class="text-muted small">Ampere Rating</label>
@@ -628,20 +625,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <!-- Third row: Setup Problem and Dokumentasi in one row -->
-                                        <div class="row mb-3">
-                                            <div class="col-md-8">
-                                                <div class="info-item">
-                                                    <label class="text-muted small">Setup Problem</label>
-                                                    <div class="fw-medium">
-                                                        <span class="editable-field"
-                                                            id="setup_problem_text">{{ $setup->setup_problem ?? 'N/A' }}</span>
-                                                        <textarea name="setup_problem" id="setup_problem_input" class="form-control d-none" rows="3" tabindex="7">{{ $setup->setup_problem }}</textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
                                             <div class="col-md-4">
                                                 <div class="info-item">
                                                     <label class="text-muted small">Documentation</label>
@@ -671,9 +655,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-
+                                        
                                     <!-- Documentation Modal -->
                                     <div class="modal fade" id="dokumentasiModal" tabindex="-1"
                                         aria-labelledby="dokumentasiModalLabel" aria-hidden="true">
@@ -707,6 +689,21 @@
                                         </div>
                                     </div>
 
+                                    <!-- Third row: Setup Problem and Dokumentasi in one row -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-8">
+                                                <div class="info-item">
+                                                    <label class="text-muted small">Setup Problem</label>
+                                                    <div class="fw-medium">
+                                                        <span class="editable-field"
+                                                            id="setup_problem_text">{{ $setup->setup_problem ?? 'N/A' }}</span>
+                                                        <textarea name="setup_problem" id="setup_problem_input" class="form-control d-none" rows="3" tabindex="7">{{ $setup->setup_problem }}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+
                                     <!-- Save and Cancel Buttons (Initially Hidden) -->
                                     <div class="edit-buttons d-none" id="maintenanceEditButtons">
                                         <button type="submit" class="btn btn-primary me-2" tabindex="10">
@@ -714,8 +711,11 @@
                                         </button>
                                     </div>
                                 </div>
+                                </div>
                             </form>
                         @endif
+                    
+                    
                         <!-- IPQC Checking Item by IPQC Section - Show only if status is Completed -->
                         @if ($setup->status == 'Pending QC' || $setup->status == 'Completed')
                             <div class="p-3 bg-light rounded-3 info-card hover-shadow mb-4">
@@ -892,10 +892,11 @@
             };
 
             // Function to set minimum datetime (current time + 10 minutes)
-            function updateMinDatetime() {
-                const now = new Date();
-                // Add 10 minutes to current time
-                now.setMinutes(now.getMinutes() + 10);
+            
+                function updateMinDatetime() {
+        const now = new Date();
+        // Add 2 hours to current time (changed from 10 minutes)
+        now.setHours(now.getHours() + 2);
 
                 // Format date to YYYY-MM-DDThh:mm format required by datetime-local input
                 const year = now.getFullYear();
@@ -931,7 +932,7 @@
                             'invalid-feedback')) {
                         const errorMsg = document.createElement('div');
                         errorMsg.className = 'invalid-feedback';
-                        errorMsg.innerHTML = 'Schedule time must be at least 10 minutes from now';
+                        errorMsg.innerHTML = 'Schedule time must be at least 2 hours from now';
                         scheduleInput.parentNode.appendChild(errorMsg);
                     }
                     return false;
@@ -1062,7 +1063,7 @@
                         event.preventDefault();
 
                         // Show alert
-                        alert('Schedule time must be at least 10 minutes from now');
+                        alert('Schedule time must be at least 2 hours from now');
 
                         // Scroll to the error field
                         scheduleInput.scrollIntoView({
@@ -1103,321 +1104,183 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elements for maintenance section
-            const toggleMaintenanceEditBtn = document.getElementById('toggleMaintenanceEdit');
-            const maintenanceEditBtnText = document.getElementById('maintenanceEditBtnText');
-            const cancelMaintenanceEditBtn = document.getElementById('cancelMaintenanceEdit');
-            const maintenanceEditButtons = document.getElementById('maintenanceEditButtons');
+     document.addEventListener('DOMContentLoaded', function() {
+    // Elements for maintenance section
+    const toggleMaintenanceEditBtn = document.getElementById('toggleMaintenanceEdit');
+    const maintenanceEditBtnText = document.getElementById('maintenanceEditBtnText');
+    const cancelMaintenanceEditBtn = document.getElementById('cancelMaintenanceEdit');
+    const maintenanceEditButtons = document.getElementById('maintenanceEditButtons');
 
-            // Dokumentasi elements
-            const toggleDokumentasiBtn = document.getElementById('toggleDokumentasi');
-            const dokumentasiInputWrapper = document.getElementById('dokumentasi_input_wrapper');
+    // Dokumentasi elements
+    const toggleDokumentasiBtn = document.getElementById('toggleDokumentasi');
+    const dokumentasiInputWrapper = document.getElementById('dokumentasi_input_wrapper');
 
-            // Modal for dokumentasi
-            const dokumentasiModal = new bootstrap.Modal(document.getElementById('dokumentasiModal'));
+    // Create fullscreen dokumentasi viewer elements
+    const fullscreenDokumentasiViewer = document.createElement('div');
+    fullscreenDokumentasiViewer.id = 'fullscreenDokumentasiViewer';
+    fullscreenDokumentasiViewer.className = 'position-fixed top-0 start-0 w-100 h-100 bg-white d-none';
+    fullscreenDokumentasiViewer.style.zIndex = '9999';
+    
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'btn btn-danger position-absolute top-0 end-0 m-3';
+    closeButton.innerHTML = '<i class="bi bi-x-lg"></i>';
+    
+    // Add content container
+    const contentContainer = document.createElement('div');
+    contentContainer.className = 'd-flex justify-content-center align-items-center h-100';
+    contentContainer.id = 'dokumentasiContent';
+    
+    // Append elements
+    fullscreenDokumentasiViewer.appendChild(closeButton);
+    fullscreenDokumentasiViewer.appendChild(contentContainer);
+    document.body.appendChild(fullscreenDokumentasiViewer);
 
-            // Fields to be made editable in maintenance section
-            const maintenanceFields = [
-                'asset_no_bt', 'setup_problem',
-                'mould_type_mtc', 'marking_type_mtc', 'cable_grip_size_mtc', 'ampere_rating'
-            ];
+    // Fields to be made editable in maintenance section
+    const maintenanceFields = [
+        'asset_no_bt', 'setup_problem',
+        'mould_type_mtc', 'marking_type_mtc', 'cable_grip_size_mtc', 'ampere_rating'
+    ];
 
-           
-
-            // Handle toggle modal for dokumentasi
-            if (toggleDokumentasiBtn) {
-                toggleDokumentasiBtn.addEventListener('click', function() {
-                    dokumentasiModal.show();
-                });
-            }
-
-            // Handle toggle edit mode for maintenance section
-            if (toggleMaintenanceEditBtn) {
-                toggleMaintenanceEditBtn.addEventListener('click', function() {
-                    const isEditing = toggleMaintenanceEditBtn.classList.contains('editing');
-                    if (!isEditing) {
-                        // Switch to edit mode
-                        toggleMaintenanceEditBtn.classList.add('editing');
-                        maintenanceEditBtnText.textContent = 'Cancel';
-                        maintenanceEditButtons.classList.remove('d-none');
-                        maintenanceEditButtons.classList.add('d-block');
-
-                        // Show input fields, hide text displays
-                        maintenanceFields.forEach(field => {
-                            const textElement = document.getElementById(`${field}_text`);
-                            const inputElement = document.getElementById(`${field}_input`);
-                            if (textElement && inputElement) {
-                                textElement.classList.add('d-none');
-                                inputElement.classList.remove('d-none');
-                                inputElement.classList.add('d-block');
-                            }
-                        });
-
-                        // Handle date field separately
-                        if (issuedDate.text && issuedDate.input) {
-                            issuedDate.text.classList.add('d-none');
-                            issuedDate.input.classList.remove('d-none');
-                            issuedDate.input.classList.add('d-block');
-                        }
-
-                        // Show dokumentasi upload field
-                        if (dokumentasiInputWrapper) {
-                            dokumentasiInputWrapper.classList.remove('d-none');
-                            dokumentasiInputWrapper.classList.add('d-block');
-                        }
-
-                        // Change the dokumentasi button appearance
-                        if (toggleDokumentasiBtn) {
-                            toggleDokumentasiBtn.innerHTML =
-                                '<i class="bi bi-eye me-1"></i> View Current Documentation';
-                        }
-                    } else {
-                        // Switch back to view mode
-                        cancelMaintenanceEditMode();
-                    }
-                });
-            }
-
-            // Cancel edit mode for maintenance section
-            if (cancelMaintenanceEditBtn) {
-                cancelMaintenanceEditBtn.addEventListener('click', function() {
-                    cancelMaintenanceEditMode();
-                });
-            }
-
-            // Function to cancel edit mode for maintenance section
-            function cancelMaintenanceEditMode() {
-                if (toggleMaintenanceEditBtn) {
-                    toggleMaintenanceEditBtn.classList.remove('editing');
+    // Handle toggle fullscreen for dokumentasi
+    if (toggleDokumentasiBtn) {
+        toggleDokumentasiBtn.addEventListener('click', function() {
+            const dokumentasiPath = '{{ $setup->dokumentasi ?? "" }}';
+            const contentContainer = document.getElementById('dokumentasiContent');
+            
+            // Clear previous content
+            contentContainer.innerHTML = '';
+            
+            if (dokumentasiPath) {
+                // Detect file type by extension
+                const extension = dokumentasiPath.split('.').pop().toLowerCase();
+                
+                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+                    // Image file
+                    const img = document.createElement('img');
+                    img.src = '/storage/' + dokumentasiPath;
+                    img.className = 'img-fluid';
+                    img.style.maxHeight = '95vh';
+                    contentContainer.appendChild(img);
+                } else if (['mp4', 'mov', 'webm', 'avi'].includes(extension)) {
+                    // Video file
+                    const video = document.createElement('video');
+                    video.src = '/storage/' + dokumentasiPath;
+                    video.className = 'img-fluid';
+                    video.controls = true;
+                    video.autoplay = true;
+                    video.style.maxHeight = '95vh';
+                    contentContainer.appendChild(video);
+                } else if (extension === 'pdf') {
+                    // PDF file
+                    const embed = document.createElement('embed');
+                    embed.src = '/storage/' + dokumentasiPath;
+                    embed.type = 'application/pdf';
+                    embed.className = 'w-100 h-100';
+                    contentContainer.appendChild(embed);
+                } else {
+                    // Unsupported file type
+                    contentContainer.innerHTML = '<div class="alert alert-warning">Unsupported file format</div>';
                 }
+            } else {
+                contentContainer.innerHTML = '<div class="alert alert-info">No documentation available</div>';
+            }
+            
+            // Show fullscreen viewer
+            fullscreenDokumentasiViewer.classList.remove('d-none');
+        });
+    }
+    
+    // Close fullscreen viewer when close button is clicked
+    closeButton.addEventListener('click', function() {
+        fullscreenDokumentasiViewer.classList.add('d-none');
+    });
 
-                if (maintenanceEditBtnText) {
-                    maintenanceEditBtnText.textContent = 'Edit';
-                }
+    // Handle toggle edit mode for maintenance section
+    if (toggleMaintenanceEditBtn) {
+        toggleMaintenanceEditBtn.addEventListener('click', function() {
+            const isEditing = toggleMaintenanceEditBtn.classList.contains('editing');
+            if (!isEditing) {
+                // Switch to edit mode
+                toggleMaintenanceEditBtn.classList.add('editing');
+                maintenanceEditBtnText.textContent = 'Cancel';
+                maintenanceEditButtons.classList.remove('d-none');
+                maintenanceEditButtons.classList.add('d-block');
 
-                if (maintenanceEditButtons) {
-                    maintenanceEditButtons.classList.add('d-none');
-                    maintenanceEditButtons.classList.remove('d-block');
-                }
-
-                // Hide input fields, show text displays
+                // Show input fields, hide text displays
                 maintenanceFields.forEach(field => {
                     const textElement = document.getElementById(`${field}_text`);
                     const inputElement = document.getElementById(`${field}_input`);
                     if (textElement && inputElement) {
-                        textElement.classList.remove('d-none');
-                        inputElement.classList.add('d-none');
-                        inputElement.classList.remove('d-block');
+                        textElement.classList.add('d-none');
+                        inputElement.classList.remove('d-none');
+                        inputElement.classList.add('d-block');
                     }
                 });
 
-                // Handle date field separately
-                if (issuedDate.text && issuedDate.input) {
-                    issuedDate.text.classList.remove('d-none');
-                    issuedDate.input.classList.add('d-none');
-                    issuedDate.input.classList.remove('d-block');
-                }
-
-                // Hide dokumentasi upload field
+                // Fixed: Show dokumentasi upload field
                 if (dokumentasiInputWrapper) {
-                    dokumentasiInputWrapper.classList.add('d-none');
-                    dokumentasiInputWrapper.classList.remove('d-block');
+                    dokumentasiInputWrapper.classList.remove('d-none');
+                    dokumentasiInputWrapper.classList.add('d-block');
                 }
 
-                // Restore the dokumentasi button appearance
+                // Change the dokumentasi button appearance
                 if (toggleDokumentasiBtn) {
-                    toggleDokumentasiBtn.innerHTML = '<i class="bi bi-eye me-1"></i> View Dokumentasi';
+                    toggleDokumentasiBtn.innerHTML =
+                        '<i class="bi bi-eye me-1"></i> View Current Documentation';
                 }
+            } else {
+                // Switch back to view mode
+                cancelMaintenanceEditMode();
             }
         });
-    </script>
+    }
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Admin Edit Button Functionality
-            const toggleAdminEditBtn = document.getElementById('toggleAdminEdit');
-            const adminEditBtnText = document.getElementById('adminEditBtnText');
+    // Cancel edit mode for maintenance section
+    if (cancelMaintenanceEditBtn) {
+        cancelMaintenanceEditBtn.addEventListener('click', function() {
+            cancelMaintenanceEditMode();
+        });
+    }
 
-            if (toggleAdminEditBtn) {
-                toggleAdminEditBtn.addEventListener('click', function() {
-                    const isEditing = toggleAdminEditBtn.classList.contains('editing');
+    // Function to cancel edit mode for maintenance section
+    function cancelMaintenanceEditMode() {
+        if (toggleMaintenanceEditBtn) {
+            toggleMaintenanceEditBtn.classList.remove('editing');
+        }
 
-                    if (!isEditing) {
-                        // Switch to edit mode
-                        toggleAdminEditBtn.classList.add('editing');
-                        adminEditBtnText.textContent = 'Cancel';
+        if (maintenanceEditBtnText) {
+            maintenanceEditBtnText.textContent = 'Edit';
+        }
 
-                        // Production section fields
-                        const productionFields = [
-                            'line', 'part_number', 'qty_product', 'customer', 'job_request',
-                            'mould_type', 'mould_category', 'marking_type', 'mould_cavity',
-                            'cable_grip_size', 'molding_mc'
-                        ];
+        if (maintenanceEditButtons) {
+            maintenanceEditButtons.classList.add('d-none');
+            maintenanceEditButtons.classList.remove('d-block');
+        }
 
-                        // Handle schedule_datetime separately
-                        const scheduleDateTime = {
-                            text: document.getElementById('schedule_datetime_text'),
-                            input: document.getElementById('schedule_datetime_input')
-                        };
-
-                        // Make production fields editable
-                        productionFields.forEach(field => {
-                            const textElement = document.getElementById(`${field}_text`);
-                            const inputElement = document.getElementById(`${field}_input`);
-
-                            if (textElement && inputElement) {
-                                textElement.classList.add('d-none');
-                                inputElement.classList.remove('d-none');
-                                inputElement.classList.add('d-block');
-                            }
-                        });
-
-                        // Make schedule_datetime editable
-                        if (scheduleDateTime.text && scheduleDateTime.input) {
-                            scheduleDateTime.text.classList.add('d-none');
-                            scheduleDateTime.input.classList.remove('d-none');
-                            scheduleDateTime.input.classList.add('d-block');
-                        }
-
-                        // Maintenance section fields (if they exist)
-                        const maintenanceFields = [
-                            'asset_no_bt', 'setup_problem',
-                            'mould_type_mtc', 'marking_type_mtc', 'cable_grip_size_mtc', 'ampere_rating'
-                        ];
-
-                       
-
-                        // Make maintenance fields editable
-                        maintenanceFields.forEach(field => {
-                            const textElement = document.getElementById(`${field}_text`);
-                            const inputElement = document.getElementById(`${field}_input`);
-
-                            if (textElement && inputElement) {
-                                textElement.classList.add('d-none');
-                                inputElement.classList.remove('d-none');
-                                inputElement.classList.add('d-block');
-                            }
-                        });
-
-                       
-                        
-
-                        // Show save buttons on both forms
-                        const productionEditButtons = document.getElementById('editButtons');
-                        if (productionEditButtons) {
-                            productionEditButtons.classList.add('show');
-                        }
-
-                        const maintenanceEditButtons = document.getElementById('maintenanceEditButtons');
-                        if (maintenanceEditButtons) {
-                            maintenanceEditButtons.classList.add('show');
-                        }
-
-                    } else {
-                        // Switch back to view mode
-                        cancelAdminEditMode();
-                    }
-                });
-
-                // Function to cancel admin edit mode
-                function cancelAdminEditMode() {
-                    toggleAdminEditBtn.classList.remove('editing');
-                    adminEditBtnText.textContent = 'Edit';
-
-                    // Production section fields
-                    const productionFields = [
-                        'line', 'part_number', 'qty_product', 'customer', 'job_request',
-                        'mould_type', 'mould_category', 'marking_type', 'mould_cavity', 'cable_grip_size',
-                        'molding_mc'
-                    ];
-
-                    // Hide input fields, show text displays
-                    productionFields.forEach(field => {
-                        const textElement = document.getElementById(`${field}_text`);
-                        const inputElement = document.getElementById(`${field}_input`);
-
-                        if (textElement && inputElement) {
-                            textElement.classList.remove('d-none');
-                            inputElement.classList.add('d-none');
-                            inputElement.classList.remove('d-block');
-                        }
-                    });
-
-                    // Handle schedule_datetime separately
-                    const scheduleDateTime = {
-                        text: document.getElementById('schedule_datetime_text'),
-                        input: document.getElementById('schedule_datetime_input')
-                    };
-
-                    if (scheduleDateTime.text && scheduleDateTime.input) {
-                        scheduleDateTime.text.classList.remove('d-none');
-                        scheduleDateTime.input.classList.add('d-none');
-                        scheduleDateTime.input.classList.remove('d-block');
-                    }
-
-                    // Maintenance section fields
-                    const maintenanceFields = [
-                        'asset_no_bt', 'setup_problem',
-                        'mould_type_mtc', 'marking_type_mtc', 'cable_grip_size_mtc', 'ampere_rating'
-                    ];
-
-                    // Hide input fields, show text displays
-                    maintenanceFields.forEach(field => {
-                        const textElement = document.getElementById(`${field}_text`);
-                        const inputElement = document.getElementById(`${field}_input`);
-
-                        if (textElement && inputElement) {
-                            textElement.classList.remove('d-none');
-                            inputElement.classList.add('d-none');
-                            inputElement.classList.remove('d-block');
-                        }
-                    });
-
-                   
-                    if (issuedDate.text && issuedDate.input) {
-                        issuedDate.text.classList.remove('d-none');
-                        issuedDate.input.classList.add('d-none');
-                        issuedDate.input.classList.remove('d-block');
-                    }
-
-                    // Hide save buttons
-                    const productionEditButtons = document.getElementById('editButtons');
-                    if (productionEditButtons) {
-                        productionEditButtons.classList.remove('show');
-                    }
-
-                    const maintenanceEditButtons = document.getElementById('maintenanceEditButtons');
-                    if (maintenanceEditButtons) {
-                        maintenanceEditButtons.classList.remove('show');
-                    }
-                }
-
-                // Add event listener for Cancel button
-                document.addEventListener('click', function(e) {
-                    if (e.target && e.target.id === 'cancelEdit' || e.target && e.target.id ===
-                        'cancelMaintenanceEdit') {
-                        cancelAdminEditMode();
-                    }
-                });
+        // Hide input fields, show text displays
+        maintenanceFields.forEach(field => {
+            const textElement = document.getElementById(`${field}_text`);
+            const inputElement = document.getElementById(`${field}_input`);
+            if (textElement && inputElement) {
+                textElement.classList.remove('d-none');
+                inputElement.classList.add('d-none');
+                inputElement.classList.remove('d-block');
             }
         });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButton = document.getElementById('toggleDokumentasi');
-            const dokumentasiContainer = document.getElementById('dokumentasiContainer');
 
-            toggleButton.addEventListener('click', function() {
-                // Toggle the visibility of the documentation container
-                if (dokumentasiContainer.classList.contains('d-none')) {
-                    dokumentasiContainer.classList.remove('d-none');
-                    toggleButton.innerHTML = '<i class="bi bi-eye-slash me-1"></i> Hide Documentation';
-                } else {
-                    dokumentasiContainer.classList.add('d-none');
-                    toggleButton.innerHTML = '<i class="bi bi-eye me-1"></i> View Documentation';
-                }
-            });
-        });
+        // Fixed: Hide dokumentasi upload field
+        if (dokumentasiInputWrapper) {
+            dokumentasiInputWrapper.classList.add('d-none');
+            dokumentasiInputWrapper.classList.remove('d-block');
+        }
+
+        // Restore the dokumentasi button appearance
+        if (toggleDokumentasiBtn) {
+            toggleDokumentasiBtn.innerHTML = '<i class="bi bi-eye me-1"></i> View Documentation';
+        }
+    }
+});
     </script>
 @endsection

@@ -240,7 +240,7 @@
                 <div class="card form-card">
                     <div class="card-header">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h4 class="mb-0">{{ __('REQUEST SETUP BY PRODUCTION') }}</h4>
+                            <h4 class="mb-0">{{ __('REQUEST SETUP BY PRODUCTION') }}</h4>
                             {{-- <span class="step-badge">Request Setup</span> --}}
                         </div>
                         <div class="form-notes">
@@ -248,7 +248,7 @@
                             <ul class="mb-0 mt-1">
                                 <li>Make sure the leader name is correct</li>
                                 <li>All fields must be filled in with the correct information</li>
-                                <li>Recheck all data before saving  </li>
+                                <li>Recheck all data before saving </li>
                             </ul>
                         </div>
                     </div>
@@ -409,7 +409,7 @@
                                             <input type="number"
                                                 class="form-control @error('qty_product') is-invalid @enderror"
                                                 id="qty_product" name="qty_product" value="{{ old('qty_product') }}"
-                                                required placeholder="Input Quantity Product">
+                                                min="1" required placeholder="Input Quantity Product">
                                             @error('qty_product')
                                                 <span class="invalid-feedback">{{ $message }}</span>
                                             @enderror
@@ -529,7 +529,7 @@
                                     </div>
                                 </div>
 
-                                
+
                                 <div class="form-group mb-4">
                                     <label for="job_request" class="form-label">Job Request</label>
                                     <textarea class="form-control @error('job_request') is-invalid @enderror" id="job_request" name="job_request"
@@ -598,106 +598,110 @@
         });
     </script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const scheduleDatetime = document.getElementById('schedule_datetime');
-    const form = document.getElementById('setupForm');
+        document.addEventListener('DOMContentLoaded', function() {
+            const scheduleDatetime = document.getElementById('schedule_datetime');
+            const form = document.getElementById('setupForm');
 
-    // Set min datetime attribute to be 2 hours from now (changed from 10 minutes)
-    function updateMinDatetime() {
-        const now = new Date();
-        // Add 2 hours to current time (changed from 10 minutes)
-        now.setHours(now.getHours() + 2);
-        
-        // Format date to YYYY-MM-DDThh:mm format required by datetime-local input
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        
-        const minDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
-        
-        // Set min attribute
-        scheduleDatetime.setAttribute('min', minDatetime);
-        
-        // Store this value to use for validation
-        scheduleDatetime.dataset.minDateTime = minDatetime;
-        
-        return minDatetime;
-    }
-    
-    // Initial setup
-    const minDatetime = updateMinDatetime();
-    
-    // If there's no value yet, set a default value 3 hours from now (changed from 30 minutes)
-    if (!scheduleDatetime.value) {
-        const defaultDate = new Date();
-        defaultDate.setHours(defaultDate.getHours() + 3); // Set it 3 hours ahead for better UX
-        
-        const year = defaultDate.getFullYear();
-        const month = String(defaultDate.getMonth() + 1).padStart(2, '0');
-        const day = String(defaultDate.getDate()).padStart(2, '0');
-        const hours = String(defaultDate.getHours()).padStart(2, '0');
-        const minutes = String(defaultDate.getMinutes()).padStart(2, '0');
-        
-        scheduleDatetime.value = `${year}-${month}-${day}T${hours}:${minutes}`;
-    }
-    
-    // Validate on change
-    scheduleDatetime.addEventListener('change', function() {
-        const selectedTime = new Date(this.value).getTime();
-        const minTime = new Date(this.dataset.minDateTime).getTime();
-        
-        if (selectedTime < minTime) {
-            // Invalid time selected
-            this.classList.add('is-invalid');
-            
-            if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'invalid-feedback';
-                errorMsg.innerHTML = 'Schedule time must be at least 2 hours from now'; // Updated error message
-                this.parentNode.appendChild(errorMsg);
+            // Set min datetime attribute to be 2 hours from now (changed from 10 minutes)
+            function updateMinDatetime() {
+                const now = new Date();
+                // Add 2 hours to current time (changed from 10 minutes)
+                now.setHours(now.getHours() + 2);
+
+                // Format date to YYYY-MM-DDThh:mm format required by datetime-local input
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+
+                const minDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+                // Set min attribute
+                scheduleDatetime.setAttribute('min', minDatetime);
+
+                // Store this value to use for validation
+                scheduleDatetime.dataset.minDateTime = minDatetime;
+
+                return minDatetime;
             }
-        } else {
-            // Valid time, remove error styling
-            this.classList.remove('is-invalid');
-            const errorFeedback = this.nextElementSibling;
-            if (errorFeedback && errorFeedback.classList.contains('invalid-feedback')) {
-                errorFeedback.remove();
+
+            // Initial setup
+            const minDatetime = updateMinDatetime();
+
+            // If there's no value yet, set a default value 3 hours from now (changed from 30 minutes)
+            if (!scheduleDatetime.value) {
+                const defaultDate = new Date();
+                defaultDate.setHours(defaultDate.getHours() + 3); // Set it 3 hours ahead for better UX
+
+                const year = defaultDate.getFullYear();
+                const month = String(defaultDate.getMonth() + 1).padStart(2, '0');
+                const day = String(defaultDate.getDate()).padStart(2, '0');
+                const hours = String(defaultDate.getHours()).padStart(2, '0');
+                const minutes = String(defaultDate.getMinutes()).padStart(2, '0');
+
+                scheduleDatetime.value = `${year}-${month}-${day}T${hours}:${minutes}`;
             }
-        }
-    });
-    
-    // Form submission validation
-    form.addEventListener('submit', function(e) {
-        // Update min datetime in case the page has been open for a while
-        updateMinDatetime();
-        
-        const selectedTime = new Date(scheduleDatetime.value).getTime();
-        const minTime = new Date(scheduleDatetime.dataset.minDateTime).getTime();
-        
-        if (selectedTime < minTime) {
-            e.preventDefault();
-            scheduleDatetime.classList.add('is-invalid');
-            
-            if (!scheduleDatetime.nextElementSibling || !scheduleDatetime.nextElementSibling.classList.contains('invalid-feedback')) {
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'invalid-feedback';
-                errorMsg.innerHTML = 'Schedule time must be at least 2 hours from now'; // Updated error message
-                scheduleDatetime.parentNode.appendChild(errorMsg);
-            }
-            
-            // Scroll to the error
-            scheduleDatetime.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
+
+            // Validate on change
+            scheduleDatetime.addEventListener('change', function() {
+                const selectedTime = new Date(this.value).getTime();
+                const minTime = new Date(this.dataset.minDateTime).getTime();
+
+                if (selectedTime < minTime) {
+                    // Invalid time selected
+                    this.classList.add('is-invalid');
+
+                    if (!this.nextElementSibling || !this.nextElementSibling.classList.contains(
+                            'invalid-feedback')) {
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'invalid-feedback';
+                        errorMsg.innerHTML =
+                        'Schedule time must be at least 2 hours from now'; // Updated error message
+                        this.parentNode.appendChild(errorMsg);
+                    }
+                } else {
+                    // Valid time, remove error styling
+                    this.classList.remove('is-invalid');
+                    const errorFeedback = this.nextElementSibling;
+                    if (errorFeedback && errorFeedback.classList.contains('invalid-feedback')) {
+                        errorFeedback.remove();
+                    }
+                }
             });
-            
-            // Show alert
-            alert('Schedule time must be at least 2 hours from now'); // Updated alert message
-        }
-    });
-});
+
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                // Update min datetime in case the page has been open for a while
+                updateMinDatetime();
+
+                const selectedTime = new Date(scheduleDatetime.value).getTime();
+                const minTime = new Date(scheduleDatetime.dataset.minDateTime).getTime();
+
+                if (selectedTime < minTime) {
+                    e.preventDefault();
+                    scheduleDatetime.classList.add('is-invalid');
+
+                    if (!scheduleDatetime.nextElementSibling || !scheduleDatetime.nextElementSibling
+                        .classList.contains('invalid-feedback')) {
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'invalid-feedback';
+                        errorMsg.innerHTML =
+                        'Schedule time must be at least 2 hours from now'; // Updated error message
+                        scheduleDatetime.parentNode.appendChild(errorMsg);
+                    }
+
+                    // Scroll to the error
+                    scheduleDatetime.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+
+                    // Show alert
+                    alert('Schedule time must be at least 2 hours from now'); // Updated alert message
+                }
+            });
+        });
     </script>
 
     <script>

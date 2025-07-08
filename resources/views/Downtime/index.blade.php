@@ -228,7 +228,8 @@
 
         .alert-success {
             background-color: #e7f4ee;
-            color: #156e45;w
+            color: #156e45;
+            w
         }
 
         .alert-danger {
@@ -344,18 +345,21 @@
                                             style="cursor: pointer;">
                                             <option value="all" {{ request('filter_type') == 'all' ? 'selected' : '' }}>
                                                 All</option>
-                                            <option value="badge"
-                                                {{ request('filter_type') == 'badge' ? 'selected' : '' }}>Badge</option>
-                                            <option value="line"
-                                                {{ request('filter_type') == 'line' ? 'selected' : '' }}>Line</option>
                                             <option value="leader"
                                                 {{ request('filter_type') == 'leader' ? 'selected' : '' }}>Leader</option>
+                                            <option value="line"
+                                                {{ request('filter_type') == 'line' ? 'selected' : '' }}>Line</option>
+                                            <option value="badge"
+                                                {{ request('filter_type') == 'badge' ? 'selected' : '' }}>Badge</option>
+                                            <option value="maintenance_repair"
+                                                {{ request('filter_type') == 'maintenance_repair' ? 'selected' : '' }}>
+                                                Technician Name</option>
+                                            <option value="molding_machine"
+                                                {{ request('filter_type') == 'molding_machine' ? 'selected' : '' }}>Molding
+                                                M/C</option>
                                             <option value="defect_category"
-                                                {{ request('filter_type') == 'defect_category' ? 'selected' : '' }}>
-                                                Defect Category</option>
-                                            <option value="molding_mc"
-                                                {{ request('filter_type') == 'molding_mc' ? 'selected' : '' }}>Molding M/C
-                                            </option>
+                                                {{ request('filter_type') == 'defect_category' ? 'selected' : '' }}>Defect
+                                                Category</option>
                                         </select>
                                     </div>
                                 </div>
@@ -394,19 +398,20 @@
                                             <th rowspan="2">Leader</th>
                                             <th rowspan="2">Line</th>
                                             <th rowspan="2">Badge</th>
+                                            <th rowspan="2">Technician </br> Name</th>
                                             <th rowspan="2">Molding </br>M/C</th>
                                             <th rowspan="2">Defect Category</th>
 
-                                            <th colspan="2" class="text-center collapsible-header" data-group="submit">
+                                            <th colspan="2" class="text-center collapsible-header" data-group="submit"
+                                                style="cursor: pointer;">
                                                 Submit <i class="fas fa-chevron-up collapse-indicator"></i>
                                             </th>
-                                            <th colspan="2" class="text-center collapsible-header" data-group="start">
+                                            <th colspan="2" class="text-center collapsible-header" data-group="start"
+                                                style="cursor: pointer;">
                                                 Start <i class="fas fa-chevron-up collapse-indicator"></i>
                                             </th>
-
-
-                                            <th colspan="2" class="text-center collapsible-header"
-                                                data-group="finish">
+                                            <th colspan="2" class="text-center collapsible-header" data-group="finish"
+                                                style="cursor: pointer;">
                                                 Finish <i class="fas fa-chevron-up collapse-indicator"></i>
                                             </th>
 
@@ -432,6 +437,7 @@
                                                 <td>{{ $downtime->leader }}</td>
                                                 <td class="text-center">{{ $downtime->line }}</td>
                                                 <td class="text-center">{{ $downtime->badge }}</td>
+                                                <td>{{ App\Models\User::find($downtime->maintenance_repair)->nama ?? 'N/A' }}
                                                 <td class="text-center">{{ $downtime->mesin->molding_mc }}</td>
                                                 <td>
                                                     @if (is_numeric($downtime->defect_category))
@@ -495,7 +501,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div style="gap: 2px;">
+                                                    <div style="display: flex; gap: 2px; justify-content: center; align-items: center;">
                                                         {{-- View button - accessible to all users --}}
                                                         <a href="{{ route('rekapdowntime.show', $downtime) }}"
                                                             class="btn btn-sm btn-outline-primary">
@@ -511,16 +517,16 @@
                                                         @endif
 
                                                         {{-- Delete button - for leader when status is 'Waiting' OR admin when status is 'Completed' --}}
-                                                        @if (auth()->user()->role === 'leader' && $downtime->status === 'Waiting')
-                                                        @if (auth()->user()->role === 'admin' && $downtime->status === 'Completed')
-                                                            {{-- // (auth()->user()->role === 'admin' && $downtime->status === 'Completed')) --}}
+                                                        @if (
+                                                            (auth()->user()->role === 'leader' && $downtime->status === 'Waiting') ||
+                                                                (auth()->user()->role === 'admin' && $downtime->status === 'Completed'))
                                                             <button type="button" class="btn btn-sm btn-outline-primary"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#deleteModal{{ $downtime->id }}">
                                                                 <i class="far fa-trash-alt "></i>
                                                             </button>
                                                         @endif
-                                                        
+
 
                                                         @if (auth()->user()->role == 'teknisi' && $downtime->status == 'In Progress')
                                                             <a href="{{ route('finishdowntime.create', ['downtime_id' => $downtime->id]) }}"
@@ -663,7 +669,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                            {{ $downtimes->links() }}
+                            <div class="mt-3">
+                                {{ $downtimes->links() }}
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -731,15 +740,19 @@
             const timeCell = row.find('.start-time');
 
             // Update UI immediately before AJAX call
-            statusCell.html(`
-                                        <div class="text-center">
-                                            <span class="badge bg-warning">
-                                                
+            statusCell.html(
+                `
+                                  <div class="text-center">
+                                    <span class="badge bg-warning">
+                                    In Progress
+                                    </span>
+                                    </div>
+                                     `
+            );
+            setTimeout(function() {
+                location.reload();
+            }, 500);
 
-                                In Progress
-                                            </span>
-                                        </div>
-                                    `);
             dateCell.text(formattedDate);
             timeCell.text(formattedTime);
 
@@ -748,12 +761,14 @@
             @if (auth()->user()->role == 'teknisi')
                 // Add finish button right away
                 if (actionsCell.find('.btn-finish').length === 0) {
-                    actionsCell.append(`
-                                                <a href="{{ route('finishdowntime.create', '') }}/${downtimeId}" 
-                                                   class="btn btn-sm btn-outline-success btn-finish ms-1">
-                                                    <i class="fas fa-check"></i> Finish
-                                                </a>
-                                            `);
+                    actionsCell.append(
+                        `
+                                        <a href="{{ route('finishdowntime.create', '') }}/${downtimeId}" 
+                                        class="btn btn-sm btn-outline-success btn-finish ms-1">
+                                             <i class="fas fa-check"></i> Finish
+                                        </a>
+                                        `
+                    );
                 }
             @endif
 
@@ -777,9 +792,9 @@
                     btnStart.prop('disabled', false);
                     statusCell.html(`
                                                 <button id="startBtn${downtimeId}" class="btn btn-success btn-start" data-id="${downtimeId}">
-                                                    Start
+                                                 Start
                                                 </button>
-                                            `);
+                                                `);
                                     dateCell.text('N/A');
                                     timeCell.text('N/A');
 

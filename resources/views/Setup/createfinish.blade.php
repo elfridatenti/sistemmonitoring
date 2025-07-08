@@ -186,7 +186,7 @@
                                         @error('dokumentasi')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                        <small class="text-muted">upload work documentation (optional)</small>
+                                        <small class="text-muted">upload work documentation</small>
                                     </div>
 
                                     <!-- Setup Problem -->

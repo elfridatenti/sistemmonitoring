@@ -160,7 +160,7 @@
             padding: 0.75rem 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 1.25rem;
             transition: all 0.25s ease;
             text-decoration: none;
             font-weight: 500;
@@ -185,22 +185,43 @@
         }
 
         /* Menu Group Styles */
+        /* Menu Group Styles - Updated */
         .menu-group-toggle {
             color: var(--text-white);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 1.25rem;
+            /* Gap yang sama dengan .nav-link */
             width: 100%;
-            font-weight: 600;
+            font-weight: 500;
+            /* Ubah dari 600 ke 500 agar sama dengan .nav-link */
             letter-spacing: 0.3px;
-            padding: 0.95rem 1rem;
-            /* Menambahkan padding yang konsisten */
+            padding: 0.75rem 1rem;
+            /* Padding yang sama dengan .nav-link */
+            transition: all 0.25s ease;
+            text-decoration: none;
+            font-size: 0.9rem;
+            /* Font size yang sama dengan .nav-link */
+            border-left: 3px solid transparent;
             margin-bottom: 5px;
-            /* Jarak yang sama dengan menu lain */
+            cursor: pointer;
+            background: none;
+            border: none;
+            border-left: 3px solid transparent;
+            /* Tambahkan border left yang sama */
+        }
+
+        /* Wrapper untuk icon dan text agar gap bisa bekerja dengan baik */
+        .menu-group-toggle .menu-content {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            flex: 1;
         }
 
         .menu-group-toggle .toggle-icon {
             margin-left: auto;
+            /* Tetap di sisi kanan */
             transition: transform 0.3s ease;
         }
 
@@ -211,6 +232,7 @@
         .menu-group-toggle:hover {
             background-color: var(--light-hover);
             color: var(--text-white);
+            border-left: 3px solid rgba(255, 255, 255, 0.5);
         }
 
         .submenu {
@@ -639,27 +661,28 @@
                         </a>
                     </div>
                 @endif
-                
+
                 {{-- Machine Setup Menu --}}
                 @if ($userRole === 'leader')
                     {{-- For Leader: Show submenu with dropdown --}}
+                    <!-- Contoh struktur HTML yang diperbaiki untuk menu grup -->
                     <div class="menu-group">
                         <div class="nav-link menu-group-toggle" data-bs-toggle="collapse" data-bs-target="#setupSubmenu"
                             data-title="Setup">
-                            <div>
+                            <div class="menu-content">
                                 <i class="fas fa-tools"></i>
                                 <span>Machine Molding Setup</span>
                             </div>
-                            <i class="bi bi-chevron-down toggle-icon"></i>
+                             <i class="bi bi-plus toggle-icon fs-4"></i>
                         </div>
                         <div id="setupSubmenu" class="submenu">
                             <a href="{{ route('setup.create') }}"
                                 class="nav-link {{ request()->routeIs('setup.create') ? 'active' : '' }}">
-                                <span>Request Setup Molding    </span>
+                                <span>Request Setup Molding</span>
                             </a>
                             <a href="{{ route('setup.index') }}"
                                 class="nav-link {{ request()->routeIs('setup.index') ? 'active' : '' }}">
-                                <span> Records Setup Molding   </span>
+                                <span>Records Setup Molding</span>
                             </a>
                         </div>
                     </div>
@@ -690,11 +713,11 @@
                     <div class="menu-group">
                         <div class="nav-link menu-group-toggle" data-bs-toggle="collapse"
                             data-bs-target="#downtimeSubmenu" data-title="Downtime">
-                            <div>
+                            <div class="menu-content">
                                 <i class="fas fa-clock"></i>
                                 <span> Machine Molding Downtime</span>
                             </div>
-                            <i class="bi bi-chevron-down toggle-icon"></i>
+                             <i class="bi bi-plus toggle-icon fs-4"></i>
                         </div>
                         <div id="downtimeSubmenu" class="submenu">
                             <a href="{{ route('downtime.create') }}"
@@ -789,14 +812,6 @@
             // Add resize event listener
             window.addEventListener('resize', handleResize);
 
-            // Navigasi notifikasi
-            // if (notificationIcon) {
-            //     notificationIcon.addEventListener("click", function(e) {
-            //         e.preventDefault();
-            //         window.location.href = "{{ route('notifications.index') }}";
-            //     });
-            // }
-
             // Mobile menu toggle
             if (mobileMenuToggle) {
                 mobileMenuToggle.addEventListener("click", function() {
@@ -819,32 +834,20 @@
                     parentSubmenu.style.display = "block";
                     parentSubmenu.style.maxHeight = parentSubmenu.scrollHeight + "px";
 
-                    // Update the toggle icon for the parent menu
-                    const parentToggle = parentSubmenu.previousElementSibling;
-                    if (parentToggle && parentToggle.querySelector('.toggle-icon')) {
-                        parentToggle.querySelector('.toggle-icon').classList.remove('bi-plus');
-                        parentToggle.querySelector('.toggle-icon').classList.add('bi-dash');
-                    }
+                    // We're keeping the plus icon for active items too
                 }
             }
 
+            // Fungsi untuk membuka dan menutup submenu
             // Fungsi untuk membuka dan menutup submenu
             function toggleSubMenu(submenu, toggleIcon) {
                 if (submenu.style.maxHeight === "0px" || submenu.style.maxHeight === "") {
                     submenu.style.display = "block";
                     submenu.style.maxHeight = submenu.scrollHeight + "px";
-                    // Change icon to minus
-                    if (toggleIcon) {
-                        toggleIcon.classList.remove('bi-plus');
-                        toggleIcon.classList.add('bi-dash');
-                    }
+                    // Keeping the plus icon for both states, so no icon change
                 } else {
                     submenu.style.maxHeight = "0px";
-                    // Change icon to plus
-                    if (toggleIcon) {
-                        toggleIcon.classList.remove('bi-dash');
-                        toggleIcon.classList.add('bi-plus');
-                    }
+                    // Keeping the plus icon for both states, so no icon change
                     setTimeout(() => {
                         submenu.style.display = "none";
                     }, 200); // Sesuai dengan durasi transisi
@@ -854,14 +857,8 @@
             // Function to close all submenus
             function closeAllSubmenus() {
                 document.querySelectorAll(".submenu").forEach((submenu) => {
-                    const toggleIcon = submenu.previousElementSibling ?
-                        submenu.previousElementSibling.querySelector('.toggle-icon') : null;
-
                     submenu.style.maxHeight = "0px";
-                    if (toggleIcon) {
-                        toggleIcon.classList.remove('bi-dash');
-                        toggleIcon.classList.add('bi-plus');
-                    }
+                    // Not changing the icon as we keep the plus icon for all states
                     setTimeout(() => {
                         submenu.style.display = "none";
                     }, 200);
@@ -882,11 +879,12 @@
 
             // Event listener for menu group toggles
             menuGroups.forEach((group) => {
-                // First, change chevron-down to plus icon
+                // Change all toggle icons to plus icon with larger size
                 const toggleIcon = group.querySelector('.toggle-icon');
                 if (toggleIcon) {
                     toggleIcon.classList.remove('bi-chevron-down');
                     toggleIcon.classList.add('bi-plus');
+                    toggleIcon.classList.add('fs-4'); // Adding larger font size
                 }
 
                 group.addEventListener("click", function(e) {
@@ -898,15 +896,7 @@
                     // Close all other submenus
                     document.querySelectorAll(".submenu").forEach((otherSubmenu) => {
                         if (otherSubmenu !== submenu) {
-                            const otherToggleIcon = otherSubmenu.previousElementSibling ?
-                                otherSubmenu.previousElementSibling.querySelector(
-                                    '.toggle-icon') : null;
-
                             otherSubmenu.style.maxHeight = "0px";
-                            if (otherToggleIcon) {
-                                otherToggleIcon.classList.remove('bi-dash');
-                                otherToggleIcon.classList.add('bi-plus');
-                            }
                             setTimeout(() => {
                                 otherSubmenu.style.display = "none";
                             }, 200);
@@ -914,10 +904,19 @@
                     });
 
                     // Toggle clicked submenu
-                    toggleSubMenu(submenu, toggleIcon);
+                    if (submenu.style.maxHeight === "0px" || submenu.style.maxHeight === "") {
+                        submenu.style.display = "block";
+                        submenu.style.maxHeight = submenu.scrollHeight + "px";
+                        // We're keeping the plus icon for both states, so no icon change
+                    } else {
+                        submenu.style.maxHeight = "0px";
+                        // We're keeping the plus icon for both states, so no icon change
+                        setTimeout(() => {
+                            submenu.style.display = "none";
+                        }, 200); // Sesuai dengan durasi transisi
+                    }
                 });
             });
-
             // Mencegah submenu menutup ketika submenu link diklik
             document.querySelectorAll(".submenu .nav-link").forEach((link) => {
                 link.addEventListener("click", (e) => {

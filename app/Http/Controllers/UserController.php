@@ -40,10 +40,6 @@ class UserController extends Controller
             })
             ->paginate($perPage);
 
-        // if ($users->isEmpty()) {
-        //     return redirect()->route('datauser.index')
-        //                    ->with('info', 'Tidak ada data user yang sesuai dengan pencarian.');
-        // }
 
         return view('datauser.index', compact('users', 'perPage', 'search', 'filterType'));
     }
@@ -57,7 +53,7 @@ class UserController extends Controller
             ]);
         } catch (\Exception $e) {
             return redirect()->route('datauser.index')
-                           ->with('error', 'Terjadi kesalahan saat membuka form tambah user.');
+                ->with('error', 'An error occurred when opening the add user form.');
         }
     }
 
@@ -66,12 +62,12 @@ class UserController extends Controller
         try {
             if (!$user->exists) {
                 return redirect()->route('datauser.index')
-                               ->with('error', 'User tidak ditemukan.');
+                    ->with('error', 'User not found.');
             }
             return view('datauser.show', compact('user'));
         } catch (\Exception $e) {
             return redirect()->route('datauser.index')
-                           ->with('error', 'Terjadi kesalahan saat menampilkan data user.');
+                ->with('error', 'An error occurred when displaying user data.');
         }
     }
     
@@ -80,7 +76,7 @@ class UserController extends Controller
         try {
             if (!$user->exists) {
                 return redirect()->route('datauser.index')
-                               ->with('error', 'User tidak ditemukan.');
+                    ->with('error', 'User not found.');
             }
             return view('datauser.edit', [
                 'user' => $user,
@@ -89,11 +85,10 @@ class UserController extends Controller
             ]);
         } catch (\Exception $e) {
             return redirect()->route('datauser.index')
-                           ->with('error', 'Terjadi kesalahan saat mengakses halaman edit.');
+                ->with('error', 'An error occurs when accessing the edit page.');
         }
     }
 
-    
 
     public function destroy($id)
     {
@@ -101,10 +96,10 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             $user->delete();
             return redirect()->route('datauser.index')
-                           ->with('success', 'User berhasil dihapus.');
+                ->with('success', 'User successfully deleted.');
         } catch (\Exception $e) {
             return redirect()->route('datauser.index')
-                           ->with('error', 'User tidak ditemukan atau sudah dihapus.');
+                ->with('error', 'User is not found or has been deleted.');
         }
     }
 
@@ -121,13 +116,12 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
             'role' => ['required', 'string', Rule::in(['admin', 'leader', 'teknisi', 'ipqc'])]
         ], [
-            'password.min' => 'Password harus minimal 8 karakter.',
-            'no_tlpn' => 'No tlpn harus berupa angka.',
-            'username' => 'Username harus minimal 4 karakter.',
-            'email' => 'Email sudah terdaftar.',
-            'nama' => 'Nama tidak boleh kosong.',
-            'badge' => 'Badge harus berupa angka.',
-
+                'password.min' => 'Password must be at least 8 characters.',
+                'no_tlpn' => 'Phone number must be numeric.',
+                'username' => 'Username must be at least 4 characters.',
+                'email' => 'Email is already registered.',
+                'nama' => 'Name cannot be empty.',
+                'badge' => 'Badge must be numeric.',
         ]);
 
         if ($validator->fails()) {
@@ -142,10 +136,10 @@ class UserController extends Controller
         User::create($validated);
        
         return redirect()->route('datauser.create')
-                       ->with('success', 'User baru berhasil ditambahkan.');
+                ->with('success', 'New user successfully added.');
     } catch (\Exception $e) {
         return redirect()->route('datauser.index')
-                       ->with('error', 'Terjadi kesalahan saat menambahkan user baru.');
+                ->with('error', 'An error occurred when adding a new user.');
     }
 }
 
@@ -154,7 +148,7 @@ public function update(Request $request, User $user)
     try {
         if (!$user->exists) {
             return redirect()->route('datauser.index')
-                           ->with('error', 'User tidak ditemukan.');
+                    ->with('error', 'User not found.');
         }
 
         $rules = [
@@ -180,10 +174,10 @@ public function update(Request $request, User $user)
         $user->update($validated);
         
         return redirect()->route('datauser.index')
-                       ->with('success', 'Data user berhasil diperbarui.');
+                ->with('success', 'User data is successfully updated.');
     } catch (\Exception $e) {
         return redirect()->route('datauser.index')
-                       ->with('error', 'Terjadi kesalahan saat memperbarui data user.');
+                ->with('error', 'An error occurred when updating user data.');
     }
 }
 

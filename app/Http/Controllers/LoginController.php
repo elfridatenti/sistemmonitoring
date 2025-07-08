@@ -29,7 +29,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'username' => 'Username atau password salah.',
+            'username' => 'Incorrect username or password.',
         ])->onlyInput('username');
     }
 
@@ -41,24 +41,4 @@ class LoginController extends Controller
 
         return redirect('/');
     }
-
-    // Tambahan: Method untuk registrasi user baru (opsional)
-    // public function register(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'bagde' => 'required|unique:users',
-    //         'nama' => 'required',
-    //         'level_user' => 'required|integer',
-    //         'email' => 'required|email|unique:users',
-    //         'no_tlpn' => 'required',
-    //         'username' => 'required|unique:users',
-    //         'password' => 'required|min:6',
-    //         'role' => 'required|in:admin,leader,teknisi',
-    //     ]);
-
-    //     $validated['password'] = Hash::make($validated['password']);
-    //     User::create($validated);
-
-    //     return redirect()->route('login')->with('success', 'Registrasi berhasil.');
-    // }
 }

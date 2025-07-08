@@ -374,30 +374,39 @@
                                         <select name="filter_type" class="form-select form-select-sm shadow-sm"
                                             style="cursor: pointer;">
                                             <option value="all"
-                                                {{ request('filter_type') === 'all' ? 'selected' : '' }}>All
-                                            </option>
+                                                {{ request('filter_type') === 'all' ? 'selected' : '' }}>All</option>
                                             <option value="leader"
                                                 {{ request('filter_type') === 'leader' ? 'selected' : '' }}>Leader</option>
                                             <option value="line"
                                                 {{ request('filter_type') === 'line' ? 'selected' : '' }}>Line</option>
-                                            <option value="mould_type"
-                                                {{ request('filter_type') === 'mould_type' ? 'selected' : '' }}>Mould Type
-                                            </option>
+                                            <option value="schedule_datetime"
+                                                {{ request('filter_type') === 'schedule_datetime' ? 'selected' : '' }}>
+                                                Schedule Datetime</option>
+                                            <option value="maintenance_name"
+                                                {{ request('filter_type') === 'maintenance_name' ? 'selected' : '' }}>
+                                                Technician Name</option>
                                             <option value="part_number"
                                                 {{ request('filter_type') === 'part_number' ? 'selected' : '' }}>Part
                                                 Number</option>
+
                                             <option value="customer"
                                                 {{ request('filter_type') === 'customer' ? 'selected' : '' }}>Customer
                                             </option>
-                                            <option value="schedule_datetime"
-                                                {{ request('filter_type') === 'schedule_datetime' ? 'selected' : '' }}>
-                                                Schedule Date</option>
+                                            <option value="mould_type"
+                                                {{ request('filter_type') === 'mould_type' ? 'selected' : '' }}>Mould Type
+                                            </option>
                                             <option value="mould_category"
                                                 {{ request('filter_type') === 'mould_category' ? 'selected' : '' }}>Mould
                                                 Category</option>
-                                            <option value="molding_mc"
-                                                {{ request('filter_type') === 'molding_mc' ? 'selected' : '' }}>Molding M/C
-                                            </option>
+
+
+                                            <option value="molding_machine"
+                                                {{ request('filter_type') === 'molding_machine' ? 'selected' : '' }}>
+                                                Molding M/C</option>
+
+
+
+
                                         </select>
                                     </div>
                                 </div>
@@ -437,28 +446,26 @@
                                             <th rowspan="2">Leader</th>
                                             <th rowspan="2">Line</th>
                                             <th rowspan="2" class="schedule-column">Schedule </br> Date/Time</th>
-                                            <th rowspan="2">Maintenance </br> Name</th>
+                                            <th rowspan="2">Technician</br> Name</th>
                                             <th rowspan="2">Part Number</th>
                                             <th rowspan="2">Customer</th>
                                             <th rowspan="2">Mould Type</th>
                                             <th rowspan="2">Mould Category</th>
                                             <th rowspan="2">Molding </br> M/C</th>
 
-                                            <th colspan="2" class="text-center collapsible-header"
-                                                data-group="submit">
+
+                                            <th colspan="2" class="text-center collapsible-header" data-group="submit"
+                                                style="cursor: pointer;">
                                                 Submit <i class="fas fa-chevron-up collapse-indicator"></i>
                                             </th>
-                                            <th colspan="2" class="text-center collapsible-header" data-group="start">
+                                            <th colspan="2" class="text-center collapsible-header" data-group="start"
+                                                style="cursor: pointer;">
                                                 Start <i class="fas fa-chevron-up collapse-indicator"></i>
                                             </th>
-
-                                            {{-- @if (auth()->user()->role === 'leader') --}}
-                                            <th colspan="2" class="text-center collapsible-header"
-                                                data-group="finish">
+                                            <th colspan="2" class="text-center collapsible-header" data-group="finish"
+                                                style="cursor: pointer;">
                                                 Finish <i class="fas fa-chevron-up collapse-indicator"></i>
                                             </th>
-                                            {{-- @endif --}}
-
                                             <th rowspan="2">Status</th>
                                             <th rowspan="2">Actions</th>
                                         </tr>
@@ -548,7 +555,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div style="gap: 2px;">
+                                                    <div style="display: flex; gap: 2px; justify-content: center; align-items: center;">
                                                         {{-- View button - accessible to all users --}}
                                                         <a href="{{ route('rekapsetup.show', ['setup' => $setup]) }}"
                                                             class="btn btn-sm btn-outline-primary"
@@ -967,7 +974,9 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="mt-3">
                             {{ $setups->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1059,6 +1068,10 @@
                             </div>
                         `);
                                         }
+
+                                        setTimeout(function() {
+                                            location.reload();
+                                        }, 500);
                                     }
                                 },
                                 error: function(xhr) {

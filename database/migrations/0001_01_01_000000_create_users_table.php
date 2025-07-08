@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('no_tlpn');
             $table->string('username')->unique();
             $table->string('password');
-            $table->enum('role', ['admin', 'leader', 'teknisi','ipqc'])->default('teknisi');
-            $table->rememberToken();
+            $table->enum('role', ['admin', 'leader', 'teknisi', 'ipqc'])->default('teknisi');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });

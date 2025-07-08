@@ -174,7 +174,7 @@ class DowntimeController extends Controller
                         ->exists();
 
                     if ($busyInSetup) {
-                        $fail('Teknisi ini sedang menangani setup lain yang masih aktif.');
+                        $fail('This technician is working on another setup that is still active.');
                     }
 
                     if ($busyInDowntime) {
@@ -208,6 +208,8 @@ class DowntimeController extends Controller
                 }
             ]
         ];
+
+
         // Validasi berbeda untuk defect kategori kustom dan standar
         if ($request->input('is_custom_defect', false)) {
             // Jika kustom, validasi input text
@@ -294,7 +296,7 @@ class DowntimeController extends Controller
     public function destroy(Downtime $downtime)
     {
         // Hapus notifikasi terkait
-        app(NotifikasiController::class)->deleteRelatedNotifications($downtime->id, 'downtime');
+        // app(NotifikasiController::class)->deleteRelatedNotifications($downtime->id, 'downtime');
 
 
         $downtime->delete();
@@ -402,9 +404,9 @@ class DowntimeController extends Controller
                 return redirect()->route('downtime.index')
                     ->with('success', 'Downtime successfully finalized and waiting for QC approval.');
             }
-            return redirect()->back()->with('error', 'Gagal menyimpan downtime');
+            return redirect()->back()->with('error', 'Failed to save downtime');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menyimpan downtime: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to save downtime: ' . $e->getMessage());
         }
     }
 
@@ -528,7 +530,7 @@ class DowntimeController extends Controller
 
             return view('downtime.index-rekap', compact('downtimes', 'perPage', 'mesins', 'defects'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal memuat data rekap: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to load recap data: ' . $e->getMessage());
         }
     }
 

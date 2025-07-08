@@ -304,7 +304,7 @@ class SetupController extends Controller
 
     public function destroy(Setup $setup)
     {
-        app(NotifikasiController::class)->deleteRelatedNotifications($setup->id, 'setup');
+        // app(NotifikasiController::class)->deleteRelatedNotifications($setup->id, 'setup');
 
         $setup->delete();
         return redirect()->route('setup.index')
@@ -703,7 +703,7 @@ class SetupController extends Controller
                 ->paginate($perPage);
             return view('setup.index-rekap', compact('setups', 'perPage', 'mesins'));
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal memuat data rekap: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to load recap data: ' . $e->getMessage());
         }
     }
 
@@ -757,7 +757,7 @@ class SetupController extends Controller
         $setup->update($validatedData);
 
         return redirect()->route('setup.index')
-            ->with('success', 'Rekap setup berhasil diperbarui');
+            ->with('success', 'Setup recap updated successfully');
     }
 
     public function RekapStore(Request $request, $setup)
@@ -796,12 +796,12 @@ class SetupController extends Controller
 
             // Redirect dengan pesan sukses
             return redirect()->route('setup.index')
-                ->with('success', 'Data Setup berhasil disimpan');
+                ->with('success', 'Setup data saved successfully');
         } catch (\Exception $e) {
             // Tangani error dengan logging atau pesan error
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
+                ->with('error', 'Failed to save the data: ' . $e->getMessage());
         }
     }
 
@@ -810,7 +810,7 @@ class SetupController extends Controller
     {
         $setup->delete();
         return redirect()->route('setup.index')
-            ->with('success', 'Rekap setup berhasil dihapus.');
+            ->with('success', 'Recap setup successfully deleted.');
     }
 
     public function RekapSearch(Request $request)

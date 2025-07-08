@@ -384,7 +384,7 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-                                <div class="mt-4">
+                                <div class="mt-3">
                                     {{ $defects->links() }}
                                 </div>
                             </div>
